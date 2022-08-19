@@ -1,8 +1,8 @@
 <?php
 
-namespace :vendor_namespace\Tests;
+namespace Esign\EmailWhitelisting\Tests;
 
-class :studly_package_nameTest extends TestCase
+class EmailWhitelistingTest extends TestCase
 {
     /** @test */
     public function test()

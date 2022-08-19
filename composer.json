@@ -1,17 +1,17 @@
 {
-    "name": ":vendor/:package_slug",
-    "description": ":package_description",
+    "name": "esign/laravel-email-whitelisting",
+    "description": "Whitelist outgoing email",
     "keywords": [
-        ":vendor",
-        ":package_name"
+        "esign",
+        "email-whitelisting"
     ],
-    "homepage": "https://github.com/:vendor/:package_slug",
+    "homepage": "https://github.com/esign/laravel-email-whitelisting",
     "license": "MIT",
     "type": "library",
     "authors": [
         {
-            "name": ":author_name",
-            "email": ":author_email",
+            "name": "Seppe Clottemans",
+            "email": "seppe@esign.eu",
             "role": "Developer"
         }
     ],
@@ -26,12 +26,12 @@
     },
     "autoload": {
         "psr-4": {
-            ":vendor_namespace_escaped\\": "src"
+            "Esign\\EmailWhitelisting\\": "src"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            ":vendor_namespace_escaped\\Tests\\": "tests"
+            "Esign\\EmailWhitelisting\\Tests\\": "tests"
         }
     },
     "scripts": {
@@ -44,10 +44,10 @@
     "extra": {
         "laravel": {
             "providers": [
-                ":vendor_namespace_escaped\\:studly_package_nameServiceProvider"
+                "Esign\\EmailWhitelisting\\EmailWhitelistingServiceProvider"
             ],
             "aliases": {
-                ":studly_package_name": ":vendor_namespace_escaped\\Facades\\:studly_package_nameFacade"
+                "EmailWhitelisting": "Esign\\EmailWhitelisting\\Facades\\EmailWhitelistingFacade"
             }
         }
     },
