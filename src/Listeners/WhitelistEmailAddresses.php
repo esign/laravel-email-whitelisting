@@ -1,0 +1,53 @@
+<?php
+
+namespace Esign\EmailWhitelisting\Listeners;
+
+use Esign\EmailWhitelisting\Models\WhitelistEmailAddress;
+use Illuminate\Mail\Events\MessageSending;
+use Illuminate\Support\Collection;
+
+class WhitelistEmailAddresses
+{
+
+    protected Collection $addresses;
+
+    public function handle(MessageSending $event): bool
+    {
+        if (!app()->isProduction() && config('email-whitelisting.whitelist_mails')) {
+
+            if (config('mail.redirect_mails')) {
+                $this->redirectMail($event);
+            } else {
+                $this->whitelistMailAddresses($event);
+            }
+
+            if (count($event->message->getTo()) == 0) {
+                // cancel mail when no send to addresses
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    protected function whitelistMailAddresses(MessageSending $event)
+    {
+        foreach (['To', 'Cc', 'Bcc'] as $type) {
+            if ($originalAddresses = $event->message->{'get' . $type}()) {
+                $typeAddresses = collect($originalAddresses)->map(function ($item) {
+                    return $item->getAddress();
+                });
+
+                $emailsSendTo = WhitelistEmailAddress::whereIn('email', $typeAddresses)->pluck('email');
+                $event->message->{strtolower($type)}(...$emailsSendTo->toArray());
+            }
+        }
+    }
+
+    protected function redirectMail(MessageSending $event)
+    {
+        $emailsSendTo = WhitelistEmailAddress::where('redirect_email', true)->pluck('email');
+
+        $event->message->to(...$emailsSendTo->toArray());
+    }
+}
