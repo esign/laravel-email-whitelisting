@@ -4,7 +4,7 @@ namespace Esign\EmailWhitelisting\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class WhitelistEmailAddress extends Model
+class WhitelistedEmailAddress extends Model
 {
     public const TABLE = 'whitelist_email_addresses';
 

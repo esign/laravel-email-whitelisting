@@ -2,7 +2,7 @@
 
 namespace Esign\EmailWhitelisting\Listeners;
 
-use Esign\EmailWhitelisting\Models\WhitelistEmailAddress;
+use Esign\EmailWhitelisting\Models\WhitelistedEmailAddress;
 use Illuminate\Mail\Events\MessageSending;
 use Illuminate\Support\Collection;
 use Symfony\Component\Mime\Address;
@@ -35,7 +35,7 @@ class WhitelistEmailAddresses
     {
         foreach (['To', 'Cc', 'Bcc'] as $type) {
             if ($originalAddresses = $event->message->{'get' . $type}()) {
-                $typeAddresses = collect($originalAddresses)->map(function (string|Address $item) {
+                $typeAddresses = collect($originalAddresses)->keys()->map(function (string|Address $item) {
                     if ($item instanceof Address) {
                         return $item->getAddress();
                     } else {
@@ -43,7 +43,7 @@ class WhitelistEmailAddresses
                     }
                 });
 
-                $emailsSendTo = WhitelistEmailAddress::whereIn('email', $typeAddresses)->pluck('email');
+                $emailsSendTo = WhitelistedEmailAddress::whereIn('email', $typeAddresses)->pluck('email');
                 $event->message->{strtolower($type)}(...$emailsSendTo->toArray());
             }
         }
@@ -51,7 +51,7 @@ class WhitelistEmailAddresses
 
     protected function redirectMail(MessageSending $event)
     {
-        $emailsSendTo = WhitelistEmailAddress::where('redirect_email', true)->pluck('email');
+        $emailsSendTo = WhitelistedEmailAddress::where('redirect_email', true)->pluck('email');
 
         $event->message->to(...$emailsSendTo->toArray());
     }
