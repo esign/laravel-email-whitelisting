@@ -55,5 +55,7 @@ class WhitelistEmailAddresses
         $emailsSendTo = WhitelistedEmailAddress::where('redirect_email', true)->pluck('email');
 
         $event->message->to(...$emailsSendTo->toArray());
+        $event->message->cc();
+        $event->message->bcc();
     }
 }
