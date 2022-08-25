@@ -14,7 +14,7 @@ class WhitelistEmailAddresses
 
     public function handle(MessageSending $event): bool
     {
-        if (!app()->isProduction() && config('email-whitelisting.whitelist_mails')) {
+        if ($this->shouldWhitelistMailAddresses()) {
 
             if (config('mail.redirect_mails')) {
                 $this->redirectMail($event);
@@ -29,6 +29,11 @@ class WhitelistEmailAddresses
         }
 
         return true;
+    }
+
+    protected function shouldWhitelistMailAddresses(): bool
+    {
+        return !app()->isProduction() && config('email-whitelisting.whitelist_mails');
     }
 
     protected function whitelistMailAddresses(MessageSending $event)
