@@ -35,12 +35,8 @@ class WhitelistEmailAddresses
     {
         foreach (['To', 'Cc', 'Bcc'] as $type) {
             if ($originalAddresses = $event->message->{'get' . $type}()) {
-                $typeAddresses = collect($originalAddresses)->keys()->map(function (string|Address $item) {
-                    if ($item instanceof Address) {
-                        return $item->getAddress();
-                    } else {
-                        return $item;
-                    }
+                $typeAddresses = collect($originalAddresses)->map(function (Address $item) {
+                    return $item->getAddress();
                 });
 
                 $emailsSendTo = WhitelistedEmailAddress::whereIn('email', $typeAddresses)->pluck('email');
