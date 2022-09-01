@@ -10,6 +10,15 @@ class WhitelistedEmailAddress extends Model
 
     protected $table = self::TABLE;
 
+    protected $fillable = [
+        'email',
+        'redirect_email'
+    ];
+
+    protected $casts = [
+        'redirect_email' => 'boolean',
+    ];
+
     // --- Getters & setters ---
 
     // --- Relations ---

@@ -11,4 +11,10 @@ abstract class TestCase extends BaseTestCase
     {
         return [EmailWhitelistingServiceProvider::class];
     }
+
+    protected function getEnvironmentSetUp($app)
+    {
+        $migration = include __DIR__ . '/../database/migrations/create_whitelist_email_addresses_table.php.stub';
+        $migration->up();
+    }
 } 
