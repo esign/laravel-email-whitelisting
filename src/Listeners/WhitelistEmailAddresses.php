@@ -13,6 +13,8 @@ class WhitelistEmailAddresses
     {
         if ($this->shouldWhitelistMailAddresses()) {
 
+            $this->addOriginalToAddressesInSubject($event);
+
             if (config('email-whitelisting.redirect_mails')) {
                 $this->redirectMail($event);
             } else {
@@ -31,6 +33,25 @@ class WhitelistEmailAddresses
     protected function shouldWhitelistMailAddresses(): bool
     {
         return !app()->isProduction() && config('email-whitelisting.whitelist_mails');
+    }
+
+    protected function addOriginalToAddressesInSubject(MessageSending $event): void
+    {
+        $subject = $event->message->getSubject() . ' (';
+
+        foreach (['To', 'Cc', 'Bcc'] as $type) {
+            if ($originalAddresses = $event->message->{'get' . $type}()) {
+                $typeAddresses = collect($originalAddresses)->map(function (Address $item) {
+                    return $item->getAddress();
+                });
+
+                $subject .= $type . ': ' . $typeAddresses->implode(', ') . ', ';
+            }
+        }
+
+        $subject .= ')';
+
+        $event->message->subject($subject);
     }
 
     protected function whitelistMailAddresses(MessageSending $event): void
