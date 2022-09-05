@@ -14,9 +14,6 @@ class EventServiceProvider extends ServiceProvider
         MessageSending::class => [
             WhitelistEmailAddresses::class
         ],
-        NotificationSending::class => [
-            WhitelistNotificationEmailAddresses::class
-        ],
     ];
 
     public function boot(): void
