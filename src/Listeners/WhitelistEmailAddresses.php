@@ -4,7 +4,6 @@ namespace Esign\EmailWhitelisting\Listeners;
 
 use Esign\EmailWhitelisting\Models\WhitelistedEmailAddress;
 use Illuminate\Mail\Events\MessageSending;
-use Illuminate\Support\Collection;
 use Symfony\Component\Mime\Address;
 
 class WhitelistEmailAddresses

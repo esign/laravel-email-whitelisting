@@ -2,16 +2,13 @@
 
 namespace Esign\EmailWhitelisting\Tests;
 
-use Esign\EmailWhitelisting\Mail\TestMail;
 use Esign\EmailWhitelisting\Models\WhitelistedEmailAddress;
+use Esign\EmailWhitelisting\Tests\Mail\TestMail;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Mail\Events\MessageSending;
-use Illuminate\Queue\Events\JobProcessed;
-use Illuminate\Queue\QueueManager;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Mail;
-use Illuminate\Support\Facades\Queue;
 
 class EmailWhitelistingTest extends TestCase
 {

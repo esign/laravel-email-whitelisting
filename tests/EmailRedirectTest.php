@@ -2,8 +2,8 @@
 
 namespace Esign\EmailWhitelisting\Tests;
 
-use Esign\EmailWhitelisting\Mail\TestMail;
 use Esign\EmailWhitelisting\Models\WhitelistedEmailAddress;
+use Esign\EmailWhitelisting\Tests\Mail\TestMail;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Mail;

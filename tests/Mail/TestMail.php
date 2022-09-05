@@ -1,6 +1,6 @@
 <?php
 
-namespace Esign\EmailWhitelisting\Mail;
+namespace Esign\EmailWhitelisting\Tests\Mail;
 
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
