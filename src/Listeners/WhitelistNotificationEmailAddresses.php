@@ -19,6 +19,8 @@ class WhitelistNotificationEmailAddresses
     {
         if ($this->shouldWhitelistMailAddresses($event->channel)) {
 
+            $this->addOriginalToAddressInSubject($event);
+
             if (config('email-whitelisting.redirect_mails')) {
                 return $this->redirectNotification($event);
             } else {
@@ -27,6 +29,24 @@ class WhitelistNotificationEmailAddresses
         }
 
         return true;
+    }
+
+    protected function addOriginalToAddressInSubject(NotificationSending $event): void
+    {
+        $message = $event->notification->toMail($event->notifiable);
+        $subject = $message->subject . ' (';
+
+        $subject .= 'To: ' . $event->notifiable->email . ', ';
+        if ($message->cc) {
+            $subject .= 'Cc: ' . implode(', ', $message->cc) . ', ';
+        }
+        if ($message->bcc) {
+            $subject .= 'Bcc: ' . implode(', ', $message->bcc);
+        }
+
+        $subject .= ')';
+
+        $message->subject($subject);
     }
 
     protected function shouldWhitelistMailAddresses(string $notificationChannel): bool
