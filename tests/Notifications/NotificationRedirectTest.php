@@ -7,6 +7,7 @@ use Esign\EmailWhitelisting\Tests\Stubs\Models\User;
 use Esign\EmailWhitelisting\Tests\Stubs\Notifications\TestNotification;
 use Esign\EmailWhitelisting\Tests\TestCase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Mail\Events\MessageSent;
 use Illuminate\Notifications\Events\NotificationSent;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Event;
@@ -19,7 +20,7 @@ class NotificationRedirectTest extends TestCase
     /** @test */
     public function it_can_redirect_a_notification_to_another_user()
     {
-        Event::fake(NotificationSent::class);
+        Event::fake(MessageSent::class);
         Config::set('email-whitelisting.whitelist_mails', true);
         Config::set('email-whitelisting.redirect_mails', true);
         WhitelistedEmailAddress::create(['email' => 'test@esign.eu', 'redirect_email' => true]);
@@ -36,15 +37,15 @@ class NotificationRedirectTest extends TestCase
 
         $user->notify(new TestNotification());
 
-        Event::assertDispatched(NotificationSent::class, function (NotificationSent $event) {
-            return $event->notifiable->email == 'test@esign.eu';
+        Event::assertDispatched(MessageSent::class, function (MessageSent $event) {
+            return $event->message->getTo()[0]->getAddress() == 'test@esign.eu';
         });
     }
 
     /** @test */
     public function it_can_redirect_a_notification_to_multiple_users()
     {
-        Event::fake(NotificationSent::class);
+        Event::fake(MessageSent::class);
         Config::set('email-whitelisting.whitelist_mails', true);
         Config::set('email-whitelisting.redirect_mails', true);
         WhitelistedEmailAddress::create(['email' => 'redirect1@esign.eu', 'redirect_email' => true]);
@@ -76,17 +77,17 @@ class NotificationRedirectTest extends TestCase
 
         Notification::send([$userA, $userB, $userC, $userD], new TestNotification());
 
-        Event::assertDispatchedTimes(NotificationSent::class,4);
+        Event::assertDispatchedTimes(MessageSent::class,4);
 
-        Event::assertDispatched(NotificationSent::class, function (NotificationSent $event) {
-            return $event->notifiable->email == 'redirect1@esign.eu';
+        Event::assertDispatched(MessageSent::class, function (MessageSent $event) {
+            return $event->message->getTo()[0]->getAddress() == 'redirect1@esign.eu';
         });
     }
 
     /** @test */
     public function it_can_redirect_multiple_notifications_to_multiple_users()
     {
-        Event::fake(NotificationSent::class);
+        Event::fake(MessageSent::class);
         Config::set('email-whitelisting.whitelist_mails', true);
         Config::set('email-whitelisting.redirect_mails', true);
         WhitelistedEmailAddress::create(['email' => 'redirect1@esign.eu', 'redirect_email' => true]);
@@ -124,7 +125,7 @@ class NotificationRedirectTest extends TestCase
 
         Notification::send([$userA, $userB, $userC, $userD], new TestNotification());
 
-        Event::assertDispatchedTimes(NotificationSent::class,8);
+        Event::assertDispatchedTimes(MessageSent::class,4);
     }
 
 }
