@@ -9,6 +9,7 @@ use Illuminate\Mail\Events\MessageSending;
 use Illuminate\Queue\Events\JobProcessed;
 use Illuminate\Queue\QueueManager;
 use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Queue;
 
@@ -85,22 +86,14 @@ class EmailWhitelistingTest extends TestCase
     /** @test */
     public function it_can_whitelist_emails_in_queued_mails()
     {
+        Event::fake();
         Config::set('email-whitelisting.whitelist_mails', true);
         Config::set('email-whitelisting.redirect_mails', false);
         WhitelistedEmailAddress::create(['email' => 'test@esign.eu']);
 
-        Queue::resolved(function (QueueManager $queueManager) {
-            $queueManager->after(function (JobProcessed $event) {
-                // get mailable from job processed
-                $mailable = unserialize($event->job->payload()['data']['command'])->mailable;
-                $this->assertContains(['name' => null, 'address' => 'test@esign.eu'] ,$mailable->to);
-                $this->assertNotContains(['name' => null, 'address' => 'agf@esign.eu'] ,$mailable->to);
-
-                $this->assertEquals(1, count($mailable->to));
-            });
-        });
-
         Mail::to(['test@esign.eu', 'agf@esign.eu'])->queue(new TestMail());
+
+        Event::assertDispatched(MessageSending::class);
     }
 
 }
