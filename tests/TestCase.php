@@ -16,8 +16,13 @@ abstract class TestCase extends BaseTestCase
 
     protected function getEnvironmentSetUp($app)
     {
-        $migration = include __DIR__ . '/../database/migrations/create_whitelist_email_addresses_table.php.stub';
-        $migration->up();
+        $WhitelistEmailAddressesMigration = include __DIR__ . '/../database/migrations/create_whitelist_email_addresses_table.php.stub';
+
+        // this migration is only for tests
+        $userMigration = include __DIR__ . '/Stubs/Migrations/create_users_table.php.stub';
+
+        $WhitelistEmailAddressesMigration->up();
+        $userMigration->up();
     }
 
     /**

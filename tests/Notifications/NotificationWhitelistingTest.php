@@ -24,7 +24,7 @@ class NotificationWhitelistingTest extends TestCase
         Config::set('email-whitelisting.redirect_mails', false);
         WhitelistedEmailAddress::create(['email' => 'test@esign.eu']);
 
-        $user = new User([
+        $user = User::create([
             'name' => 'test',
             'email' => 'test2@esign.eu'
         ]);
@@ -43,17 +43,17 @@ class NotificationWhitelistingTest extends TestCase
         WhitelistedEmailAddress::create(['email' => 'test@esign.eu']);
         WhitelistedEmailAddress::create(['email' => 'test2@esign.eu']);
 
-        $userA = new User([
+        $userA = User::create([
             'name' => 'test1',
             'email' => 'test@esign.eu'
         ]);
 
-        $userB = new User([
+        $userB = User::create([
             'name' => 'test2',
             'email' => 'test2@esign.eu'
         ]);
 
-        $userC = new User([
+        $userC = User::create([
             'name' => 'test3',
             'email' => 'test3@esign.eu'
         ]);
@@ -70,17 +70,17 @@ class NotificationWhitelistingTest extends TestCase
         Config::set('email-whitelisting.whitelist_mails', true);
         Config::set('email-whitelisting.redirect_mails', false);
 
-        $userA = new User([
+        $userA = User::create([
             'name' => 'test1',
             'email' => 'test@esign.eu'
         ]);
 
-        $userB = new User([
+        $userB = User::create([
             'name' => 'test2',
             'email' => 'test2@esign.eu'
         ]);
 
-        $userC = new User([
+        $userC = User::create([
             'name' => 'test3',
             'email' => 'test3@esign.eu'
         ]);
