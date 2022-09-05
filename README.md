@@ -46,6 +46,7 @@ This works the same way as normal emails.
 ## Notes
 * When there are no emails to send a mail to due to the email not containing any "to"
 email addresses in the email whitelisting config the email will not be send. This will not throw an error.
+* The package will always add the original receivers of the mail in the subject of the mail. For example (To: example@esign.eu, Cc: example2@esign.eu).
 
 ### Testing
 
