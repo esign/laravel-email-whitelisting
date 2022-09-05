@@ -14,6 +14,7 @@ class TestMail extends Mailable
     public function build(): self
     {
         return $this
+            ->subject('test')
             ->from('test@esign.eu')
             ->html('test');
     }

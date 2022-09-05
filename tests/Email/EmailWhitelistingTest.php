@@ -94,4 +94,16 @@ class EmailWhitelistingTest extends TestCase
         Event::assertDispatched(MessageSending::class);
     }
 
+    /** @test */
+    public function it_can_add_original_to_address_in_subject()
+    {
+        Config::set('email-whitelisting.whitelist_mails', true);
+        Config::set('email-whitelisting.redirect_mails', false);
+        WhitelistedEmailAddress::create(['email' => 'test@esign.eu']);
+
+        $mail = Mail::to(['test@esign.eu', 'agf@esign.eu'])->send(new TestMail());
+
+        $this->assertEquals('test (To: test@esign.eu, agf@esign.eu, )' , $mail->getSymfonySentMessage()->getOriginalMessage()->getSubject());
+    }
+
 }
