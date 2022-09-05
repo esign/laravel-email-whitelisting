@@ -1,9 +1,10 @@
 <?php
 
-namespace Esign\EmailWhitelisting\Tests;
+namespace Esign\EmailWhitelisting\Tests\Email;
 
 use Esign\EmailWhitelisting\Models\WhitelistedEmailAddress;
-use Esign\EmailWhitelisting\Tests\Mail\TestMail;
+use Esign\EmailWhitelisting\Tests\Stubs\Mail\TestMail;
+use Esign\EmailWhitelisting\Tests\TestCase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Mail;
