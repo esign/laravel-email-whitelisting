@@ -10,8 +10,6 @@ use Symfony\Component\Mime\Address;
 class WhitelistEmailAddresses
 {
 
-    protected Collection $addresses;
-
     public function handle(MessageSending $event): bool
     {
         if ($this->shouldWhitelistMailAddresses()) {
