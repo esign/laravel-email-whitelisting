@@ -39,6 +39,10 @@ The whitelisting will automatically apply when `WHITELIST_MAILS` is set to true 
 If you choose to redirect the emails you need to set `REDIRECT_MAILS=true` in your .env file.
 Next you'll need to set the `redirect_email` boolean to true on all the email addresses that you want to redirect the emails to in the `whitelist_email_addresses` table.
 
+## Notifications
+This package can also whitelist or redirect notifications that are sent through the mail channel.
+This works the same way as normal emails.
+
 ## Notes
 * When there are no emails to send a mail to due to the email not containing any "to"
 email addresses in the email whitelisting config the email will not be send. This will not throw an error.
