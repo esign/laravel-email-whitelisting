@@ -33,7 +33,7 @@ class WhitelistEmailAddresses
         return !app()->isProduction() && config('email-whitelisting.whitelist_mails');
     }
 
-    protected function whitelistMailAddresses(MessageSending $event)
+    protected function whitelistMailAddresses(MessageSending $event): void
     {
         foreach (['To', 'Cc', 'Bcc'] as $type) {
             if ($originalAddresses = $event->message->{'get' . $type}()) {
@@ -47,7 +47,7 @@ class WhitelistEmailAddresses
         }
     }
 
-    protected function redirectMail(MessageSending $event)
+    protected function redirectMail(MessageSending $event): void
     {
         $emailsSendTo = WhitelistedEmailAddress::where('redirect_email', true)->pluck('email');
 
