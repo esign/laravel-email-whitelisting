@@ -32,7 +32,7 @@ class WhitelistEmailAddresses
 
     protected function shouldWhitelistMailAddresses(): bool
     {
-        return ! app()->isProduction() && config('email-whitelisting.whitelist_mails');
+        return ! app()->isProduction() && config('email-whitelisting.enabled');
     }
 
     protected function addOriginalToAddressesInSubject(MessageSending $event): void
