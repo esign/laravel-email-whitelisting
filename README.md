@@ -15,13 +15,27 @@ You can install the package via composer:
 composer require esign/laravel-email-whitelisting
 ```
 
-This package comes with a migration to store your whitelisted email addresses. 
+You can choose to configure email addresses to whitelist using the config driver or the database driver.
+Below you will find the two configuration methods.
+
+### Config
+If you like to configure the email addresses in a configuration file you'll need to publish the config file.
+```bash
+php artisan vendor:publish --provider="Esign\EmailWhitelisting\EmailWhitelistingServiceProvider" --tag="config"
+```
+
+### Database
+In case you would like to configure the email addresses in your database this package comes with a migration to store your whitelisted email addresses. 
 You can publish this migration using:
 ```bash
 php artisan vendor:publish --provider="Esign\EmailWhitelisting\EmailWhitelistingServiceProvider" --tag="migrations"
 ```
 
 In your .env file you may use the below config to use the package the way you want.
+
+* `WHITELIST_MAIL_DRIVER` this has two available values' `config` (default) and `database`.
+  * When this is set to `config` the package will use the `mail_addresses` array set in the [config file](config/email-whitelisting.php).
+  * When set to `database` The package will use the addresses from your `whitelist_email_addresses` table.
 
 * `WHITELIST_MAILS` Is a boolean used to determine if the whitelist package should be used. 
 When set to false there will be no email whitelisting or email redirects.
@@ -32,12 +46,13 @@ To redirect all emails to the configured email addresses set the `REDIRECT_MAILS
 ## Usage
 
 ### Whitelist
-For whitelisting email addresses this package will use the configured email addresses in the `whitelist_email_addresses` table.
+For whitelisting email addresses this package will use the configured email addresses in the `whitelist_email_addresses` table or `mail_addresses` array in the config.
 The whitelisting will automatically apply when `WHITELIST_MAILS` is set to true and `REDIRECT_MAILS` is set to false.
 
 ### Redirect
 If you choose to redirect the emails you need to set `REDIRECT_MAILS=true` in your .env file.
-Next you'll need to set the `redirect_email` boolean to true on all the email addresses that you want to redirect the emails to in the `whitelist_email_addresses` table.
+Next if you chose the database driver you'll need to set the `redirect_email` boolean to true on all the email addresses that you want to redirect the emails to in the `whitelist_email_addresses` table.
+If you chose the config driver you don't need to configure any extras.
 
 ## Notifications
 This package can also whitelist or redirect notifications that are sent through the mail channel.
