@@ -126,4 +126,47 @@ class EmailWhitelistingTest extends TestCase
 
         $this->assertEquals(['test@esign.eu'], $recipients);
     }
+
+    /** @test */
+    public function it_can_use_wildcards()
+    {
+        Config::set('email-whitelisting.driver', 'database');
+        Config::set('email-whitelisting.whitelist_mails', true);
+        Config::set('email-whitelisting.redirect_mails', false);
+        WhitelistedEmailAddress::create(['email' => '*@esign.eu']);
+
+        $mail = Mail::to(['test@esign.eu', 'agf@esign.eu', 'test2@esign.eu', 'external@gmail.com'])->send(new TestMail());
+        $recipients = $this->getAddresses($mail);
+
+        $this->assertEquals(['test@esign.eu', 'agf@esign.eu', 'test2@esign.eu'], $recipients);
+    }
+
+    /** @test */
+    public function it_wont_add_duplicate_addresses_with_wild_cards()
+    {
+        Config::set('email-whitelisting.driver', 'database');
+        Config::set('email-whitelisting.whitelist_mails', true);
+        Config::set('email-whitelisting.redirect_mails', false);
+        WhitelistedEmailAddress::create(['email' => '*@esign.eu']);
+        WhitelistedEmailAddress::create(['email' => 'test@esign.eu']);
+
+        $mail = Mail::to(['test@esign.eu', 'agf@esign.eu', 'test2@esign.eu', 'external@gmail.com'])->send(new TestMail());
+        $recipients = $this->getAddresses($mail);
+
+        $this->assertEquals(['test@esign.eu', 'agf@esign.eu', 'test2@esign.eu'], $recipients);
+    }
+
+    /** @test */
+    public function it_can_use_wildcards_with_the_config_driver()
+    {
+        Config::set('email-whitelisting.driver', 'config');
+        Config::set('email-whitelisting.whitelist_mails', true);
+        Config::set('email-whitelisting.redirect_mails', false);
+        Config::set('email-whitelisting.mail_addresses', ['*@esign.eu']);
+
+        $mail = Mail::to(['test@esign.eu', 'agf@esign.eu', 'test2@esign.eu', 'external@gmail.com'])->send(new TestMail());
+        $recipients = $this->getAddresses($mail);
+
+        $this->assertEquals(['test@esign.eu', 'agf@esign.eu', 'test2@esign.eu'], $recipients);
+    }
 }

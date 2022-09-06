@@ -54,6 +54,10 @@ If you choose to redirect the emails you need to set `REDIRECT_MAILS=true` in yo
 Next if you chose the database driver you'll need to set the `redirect_email` boolean to true on all the email addresses that you want to redirect the emails to in the `whitelist_email_addresses` table.
 If you chose the config driver you don't need to configure any extras.
 
+## Wildcards
+You can use wildcards for your email whitelisting by adding a * in front of the address. 
+For example `*@esign.eu` will allow all Esign email addresses.
+
 ## Notifications
 This package can also whitelist or redirect notifications that are sent through the mail channel.
 This works the same way as normal emails.

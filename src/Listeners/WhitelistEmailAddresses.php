@@ -4,6 +4,8 @@ namespace Esign\EmailWhitelisting\Listeners;
 
 use Esign\EmailWhitelisting\Models\WhitelistedEmailAddress;
 use Illuminate\Mail\Events\MessageSending;
+use Illuminate\Support\Arr;
+use Illuminate\Support\Str;
 use Symfony\Component\Mime\Address;
 
 class WhitelistEmailAddresses
@@ -61,11 +63,33 @@ class WhitelistEmailAddresses
                 });
 
                 if (config('email-whitelisting.driver') == 'config') {
-                    $emailsSendTo = config('email-whitelisting.mail_addresses');
+                    $whitelistedEmailAddresses = Arr::where(config('email-whitelisting.mail_addresses'), function (string $email) {
+                        return !Str::startsWith($email, '*');
+                    });
+                    $wildcards = collect(config('email-whitelisting.mail_addresses'))->where(function (string $email) {
+                        return Str::startsWith($email, '*');
+                    })->map(function (string $wildcard) {
+                        return Str::after($wildcard, '*');
+                    })->toArray();
+
+                    $addressesFromWildCards = $typeAddresses->where(function (string $typeAddress) use ($wildcards) {
+                        return Str::endsWith($typeAddress, $wildcards);
+                    });
+
+                    $emailsSendTo = array_unique([...$whitelistedEmailAddresses, ...$addressesFromWildCards]);
                     $event->message->{strtolower($type)}(...$emailsSendTo);
+
                 } elseif (config('email-whitelisting.driver') == 'database') {
-                    $emailsSendTo = WhitelistedEmailAddress::whereIn('email', $typeAddresses)->pluck('email');
-                    $event->message->{strtolower($type)}(...$emailsSendTo->toArray());
+                    $whitelistedEmailAddresses = WhitelistedEmailAddress::whereIn('email', $typeAddresses)->pluck('email');
+                    $wildcards = WhitelistedEmailAddress::where('email', 'like', '*%')->pluck('email')->map(function (string $wildcard) {
+                        return Str::after($wildcard, '*');
+                    })->toArray();
+                    $addressesFromWildCards = Arr::where($typeAddresses->toArray(), function (string $typeAddress) use ($wildcards) {
+                        return Str::endsWith($typeAddress, $wildcards);
+                    });
+
+                    $emailsSendTo = array_unique([...$whitelistedEmailAddresses, ...$addressesFromWildCards]);
+                    $event->message->{strtolower($type)}(...$emailsSendTo);
                 }
             }
         }
