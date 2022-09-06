@@ -83,7 +83,7 @@ class WhitelistEmailAddresses
                     $wildcards = WhitelistedEmailAddress::where('email', 'like', '*%')->pluck('email')->map(function (string $wildcard) {
                         return Str::after($wildcard, '*');
                     })->toArray();
-                    $addressesFromWildCards = Arr::where($typeAddresses->toArray(), function (string $typeAddress) use ($wildcards) {
+                    $addressesFromWildCards = $typeAddresses->where(function (string $typeAddress) use ($wildcards) {
                         return Str::endsWith($typeAddress, $wildcards);
                     });
 
