@@ -16,6 +16,7 @@ class EmailRedirectTest extends TestCase
     /** @test */
     public function it_can_redirect_emails_to_an_email_address()
     {
+        Config::set('email-whitelisting.driver', 'database');
         Config::set('email-whitelisting.whitelist_mails', true);
         Config::set('email-whitelisting.redirect_mails', true);
         WhitelistedEmailAddress::create(['email' => 'test@esign.eu', 'redirect_email' => true]);
@@ -29,6 +30,7 @@ class EmailRedirectTest extends TestCase
     /** @test */
     public function it_can_redirect_emails_to_multiple_email_address()
     {
+        Config::set('email-whitelisting.driver', 'database');
         Config::set('email-whitelisting.whitelist_mails', true);
         Config::set('email-whitelisting.redirect_mails', true);
         WhitelistedEmailAddress::create(['email' => 'test@esign.eu', 'redirect_email' => true]);
@@ -43,6 +45,7 @@ class EmailRedirectTest extends TestCase
     /** @test */
     public function it_removes_cc_in_redirect_mails()
     {
+        Config::set('email-whitelisting.driver', 'database');
         Config::set('email-whitelisting.whitelist_mails', true);
         Config::set('email-whitelisting.redirect_mails', true);
         WhitelistedEmailAddress::create(['email' => 'test@esign.eu', 'redirect_email' => true]);
@@ -56,6 +59,7 @@ class EmailRedirectTest extends TestCase
     /** @test */
     public function it_removes_bcc_in_redirect_mails()
     {
+        Config::set('email-whitelisting.driver', 'database');
         Config::set('email-whitelisting.whitelist_mails', true);
         Config::set('email-whitelisting.redirect_mails', true);
         WhitelistedEmailAddress::create(['email' => 'test@esign.eu', 'redirect_email' => true]);
@@ -64,5 +68,19 @@ class EmailRedirectTest extends TestCase
         $bccRecipients = $this->getAddresses($mail, 'Bcc');
 
         $this->assertEmpty($bccRecipients);
+    }
+
+    /** @test */
+    public function it_can_use_the_config_driver()
+    {
+        Config::set('email-whitelisting.driver', 'config');
+        Config::set('email-whitelisting.whitelist_mails', true);
+        Config::set('email-whitelisting.redirect_mails', true);
+        Config::set('email-whitelisting.mail_addresses', ['test@esign.eu']);
+
+        $mail = Mail::to(['agf@esign.eu', 'example@esign.eu'])->send(new TestMail());
+        $recipients = $this->getAddresses($mail, 'To');
+
+        $this->assertEquals(['test@esign.eu'], $recipients);
     }
 }

@@ -18,6 +18,7 @@ class EmailWhitelistingTest extends TestCase
     /** @test */
     public function it_can_whitelist_email_addresses()
     {
+        Config::set('email-whitelisting.driver', 'database');
         Config::set('email-whitelisting.whitelist_mails', true);
         Config::set('email-whitelisting.redirect_mails', false);
         WhitelistedEmailAddress::create(['email' => 'test@esign.eu']);
@@ -31,6 +32,7 @@ class EmailWhitelistingTest extends TestCase
     /** @test */
     public function it_can_whitelist_email_addresses_in_cc()
     {
+        Config::set('email-whitelisting.driver', 'database');
         Config::set('email-whitelisting.whitelist_mails', true);
         Config::set('email-whitelisting.redirect_mails', false);
         WhitelistedEmailAddress::create(['email' => 'test@esign.eu']);
@@ -45,6 +47,7 @@ class EmailWhitelistingTest extends TestCase
     /** @test */
     public function it_can_whitelist_email_addresses_in_bcc()
     {
+        Config::set('email-whitelisting.driver', 'database');
         Config::set('email-whitelisting.whitelist_mails', true);
         Config::set('email-whitelisting.redirect_mails', false);
         WhitelistedEmailAddress::create(['email' => 'test@esign.eu']);
@@ -59,6 +62,7 @@ class EmailWhitelistingTest extends TestCase
     /** @test */
     public function it_can_disable_email_whitelisting()
     {
+        Config::set('email-whitelisting.driver', 'database');
         Config::set('email-whitelisting.whitelist_mails', false);
         Config::set('email-whitelisting.redirect_mails', false);
         WhitelistedEmailAddress::create(['email' => 'test@esign.eu']);
@@ -72,6 +76,7 @@ class EmailWhitelistingTest extends TestCase
     /** @test */
     public function it_wont_throw_an_error_when_no_valid_email_addresses_are_given()
     {
+        Config::set('email-whitelisting.driver', 'database');
         Config::set('email-whitelisting.whitelist_mails', true);
         Config::set('email-whitelisting.redirect_mails', false);
         WhitelistedEmailAddress::create(['email' => 'test@esign.eu']);
@@ -84,6 +89,7 @@ class EmailWhitelistingTest extends TestCase
     /** @test */
     public function it_can_whitelist_emails_in_queued_mails()
     {
+        Config::set('email-whitelisting.driver', 'database');
         Event::fake();
         Config::set('email-whitelisting.whitelist_mails', true);
         Config::set('email-whitelisting.redirect_mails', false);
@@ -97,6 +103,7 @@ class EmailWhitelistingTest extends TestCase
     /** @test */
     public function it_can_add_original_to_address_in_subject()
     {
+        Config::set('email-whitelisting.driver', 'database');
         Config::set('email-whitelisting.whitelist_mails', true);
         Config::set('email-whitelisting.redirect_mails', false);
         WhitelistedEmailAddress::create(['email' => 'test@esign.eu']);
@@ -104,5 +111,19 @@ class EmailWhitelistingTest extends TestCase
         $mail = Mail::to(['test@esign.eu', 'agf@esign.eu'])->send(new TestMail());
 
         $this->assertEquals('test (To: test@esign.eu, agf@esign.eu, )', $mail->getSymfonySentMessage()->getOriginalMessage()->getSubject());
+    }
+
+    /** @test */
+    public function it_can_use_the_config_driver()
+    {
+        Config::set('email-whitelisting.driver', 'config');
+        Config::set('email-whitelisting.whitelist_mails', true);
+        Config::set('email-whitelisting.redirect_mails', false);
+        Config::set('email-whitelisting.mail_addresses', ['test@esign.eu']);
+
+        $mail = Mail::to(['test@esign.eu', 'agf@esign.eu'])->send(new TestMail());
+        $recipients = $this->getAddresses($mail);
+
+        $this->assertEquals(['test@esign.eu'], $recipients);
     }
 }

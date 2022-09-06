@@ -19,6 +19,7 @@ class NotificationWhitelistingTest extends TestCase
     /** @test */
     public function it_can_whitelist_email_address_in_a_notification()
     {
+        Config::set('email-whitelisting.driver', 'database');
         Event::fake(MessageSent::class);
         Config::set('email-whitelisting.whitelist_mails', true);
         Config::set('email-whitelisting.redirect_mails', false);
@@ -37,6 +38,7 @@ class NotificationWhitelistingTest extends TestCase
     /** @test */
     public function it_can_whitelist_email_addresses_in_a_notification()
     {
+        Config::set('email-whitelisting.driver', 'database');
         Event::fake(MessageSent::class);
         Config::set('email-whitelisting.whitelist_mails', true);
         Config::set('email-whitelisting.redirect_mails', false);
@@ -66,6 +68,7 @@ class NotificationWhitelistingTest extends TestCase
     /** @test */
     public function it_wont_throw_an_error_when_no_valid_email_addresses_are_given()
     {
+        Config::set('email-whitelisting.driver', 'database');
         Event::fake(MessageSent::class);
         Config::set('email-whitelisting.whitelist_mails', true);
         Config::set('email-whitelisting.redirect_mails', false);
@@ -93,6 +96,7 @@ class NotificationWhitelistingTest extends TestCase
     /** @test */
     public function it_can_redirect_a_notification_to_another_user()
     {
+        Config::set('email-whitelisting.driver', 'database');
         Event::fake(MessageSent::class);
         Config::set('email-whitelisting.whitelist_mails', true);
         Config::set('email-whitelisting.redirect_mails', false);
