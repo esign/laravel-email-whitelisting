@@ -5,6 +5,7 @@ namespace Esign\EmailWhitelisting\Listeners;
 use Esign\EmailWhitelisting\Models\WhitelistedEmailAddress;
 use Illuminate\Mail\Events\MessageSending;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 use Symfony\Component\Mime\Address;
 
@@ -63,35 +64,54 @@ class WhitelistEmailAddresses
                 });
 
                 if (config('email-whitelisting.driver') == 'config') {
-                    $whitelistedEmailAddresses = Arr::where(config('email-whitelisting.mail_addresses'), function (string $email) {
-                        return ! Str::startsWith($email, '*');
-                    });
-                    $wildcards = collect(config('email-whitelisting.mail_addresses'))->where(function (string $email) {
-                        return Str::startsWith($email, '*');
-                    })->map(function (string $wildcard) {
-                        return Str::after($wildcard, '*');
-                    })->toArray();
-
-                    $addressesFromWildCards = $typeAddresses->where(function (string $typeAddress) use ($wildcards) {
-                        return Str::endsWith($typeAddress, $wildcards);
-                    });
-
-                    $emailsSendTo = array_unique([...$whitelistedEmailAddresses, ...$addressesFromWildCards]);
+                    $emailsSendTo = $this->whitelistEmailsFromConfig($typeAddresses);
                     $event->message->{strtolower($type)}(...$emailsSendTo);
                 } elseif (config('email-whitelisting.driver') == 'database') {
-                    $whitelistedEmailAddresses = WhitelistedEmailAddress::whereIn('email', $typeAddresses)->pluck('email');
-                    $wildcards = WhitelistedEmailAddress::where('email', 'like', '*%')->pluck('email')->map(function (string $wildcard) {
-                        return Str::after($wildcard, '*');
-                    })->toArray();
-                    $addressesFromWildCards = $typeAddresses->where(function (string $typeAddress) use ($wildcards) {
-                        return Str::endsWith($typeAddress, $wildcards);
-                    });
-
-                    $emailsSendTo = array_unique([...$whitelistedEmailAddresses, ...$addressesFromWildCards]);
+                    $emailsSendTo = $this->whitelistEmailsFromDatabase($typeAddresses);
                     $event->message->{strtolower($type)}(...$emailsSendTo);
                 }
             }
         }
+    }
+
+    /**
+     * @param Collection $typeAddresses
+     * @return array
+     */
+    protected function whitelistEmailsFromConfig(Collection $typeAddresses): array
+    {
+        $whitelistedEmailAddresses = Arr::where(config('email-whitelisting.mail_addresses'), function (string $email) {
+            return ! Str::startsWith($email, '*');
+        });
+        $wildcards = collect(config('email-whitelisting.mail_addresses'))->where(function (string $email) {
+            return Str::startsWith($email, '*');
+        })->map(function (string $wildcard) {
+            return Str::after($wildcard, '*');
+        })->toArray();
+
+        $addressesFromWildCards = $typeAddresses->where(function (string $typeAddress) use ($wildcards) {
+            return Str::endsWith($typeAddress, $wildcards);
+        });
+
+        return array_unique([...$whitelistedEmailAddresses, ...$addressesFromWildCards]);
+    }
+
+    /**
+     * @param Collection $typeAddresses
+     * @return array
+     */
+    protected function whitelistEmailsFromDatabase(Collection $typeAddresses): array
+    {
+        $whitelistedEmailAddresses = WhitelistedEmailAddress::whereIn('email', $typeAddresses)->pluck('email');
+        $wildcards = WhitelistedEmailAddress::where('email', 'like', '*%')->pluck('email')->map(function (string $wildcard) {
+            return Str::after($wildcard, '*');
+        })->toArray();
+
+        $addressesFromWildCards = $typeAddresses->where(function (string $typeAddress) use ($wildcards) {
+            return Str::endsWith($typeAddress, $wildcards);
+        });
+
+        return array_unique([...$whitelistedEmailAddresses, ...$addressesFromWildCards]);
     }
 
     protected function redirectMail(MessageSending $event): void
