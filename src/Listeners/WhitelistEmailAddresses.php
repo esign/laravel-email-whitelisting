@@ -60,17 +60,28 @@ class WhitelistEmailAddresses
                     return $item->getAddress();
                 });
 
-                $emailsSendTo = WhitelistedEmailAddress::whereIn('email', $typeAddresses)->pluck('email');
-                $event->message->{strtolower($type)}(...$emailsSendTo->toArray());
+                if (config('email-whitelisting.driver') == 'config') {
+                    $emailsSendTo = config('email-whitelisting.mail_addresses');
+                    $event->message->{strtolower($type)}(...$emailsSendTo);
+                } elseif (config('email-whitelisting.driver') == 'database') {
+                    $emailsSendTo = WhitelistedEmailAddress::whereIn('email', $typeAddresses)->pluck('email');
+                    $event->message->{strtolower($type)}(...$emailsSendTo->toArray());
+                }
             }
         }
     }
 
     protected function redirectMail(MessageSending $event): void
     {
-        $emailsSendTo = WhitelistedEmailAddress::where('redirect_email', true)->pluck('email');
 
-        $event->message->to(...$emailsSendTo->toArray());
+        if (config('email-whitelisting.driver') == 'config') {
+            $emailsSendTo = config('email-whitelisting.mail_addresses');
+            $event->message->to(...$emailsSendTo);
+        } elseif (config('email-whitelisting.driver') == 'database') {
+            $emailsSendTo = WhitelistedEmailAddress::where('redirect_email', true)->pluck('email');
+            $event->message->to(...$emailsSendTo->toArray());
+        }
+
         $event->message->cc();
         $event->message->bcc();
     }
