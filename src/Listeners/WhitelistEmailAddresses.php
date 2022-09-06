@@ -64,7 +64,7 @@ class WhitelistEmailAddresses
 
                 if (config('email-whitelisting.driver') == 'config') {
                     $whitelistedEmailAddresses = Arr::where(config('email-whitelisting.mail_addresses'), function (string $email) {
-                        return !Str::startsWith($email, '*');
+                        return ! Str::startsWith($email, '*');
                     });
                     $wildcards = collect(config('email-whitelisting.mail_addresses'))->where(function (string $email) {
                         return Str::startsWith($email, '*');
@@ -78,7 +78,6 @@ class WhitelistEmailAddresses
 
                     $emailsSendTo = array_unique([...$whitelistedEmailAddresses, ...$addressesFromWildCards]);
                     $event->message->{strtolower($type)}(...$emailsSendTo);
-
                 } elseif (config('email-whitelisting.driver') == 'database') {
                     $whitelistedEmailAddresses = WhitelistedEmailAddress::whereIn('email', $typeAddresses)->pluck('email');
                     $wildcards = WhitelistedEmailAddress::where('email', 'like', '*%')->pluck('email')->map(function (string $wildcard) {
@@ -97,7 +96,6 @@ class WhitelistEmailAddresses
 
     protected function redirectMail(MessageSending $event): void
     {
-
         if (config('email-whitelisting.driver') == 'config') {
             $emailsSendTo = config('email-whitelisting.mail_addresses');
             $event->message->to(...$emailsSendTo);

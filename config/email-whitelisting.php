@@ -23,5 +23,5 @@ return [
 
     'mail_addresses' => [
 
-    ]
+    ],
 ];
