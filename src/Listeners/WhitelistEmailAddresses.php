@@ -74,10 +74,6 @@ class WhitelistEmailAddresses
         }
     }
 
-    /**
-     * @param Collection $typeAddresses
-     * @return array
-     */
     protected function whitelistEmailsFromConfig(Collection $typeAddresses): array
     {
         $whitelistedEmailAddresses = Arr::where(config('email-whitelisting.mail_addresses'), function (string $email) {
@@ -96,10 +92,6 @@ class WhitelistEmailAddresses
         return array_unique([...$whitelistedEmailAddresses, ...$addressesFromWildCards]);
     }
 
-    /**
-     * @param Collection $typeAddresses
-     * @return array
-     */
     protected function whitelistEmailsFromDatabase(Collection $typeAddresses): array
     {
         $whitelistedEmailAddresses = WhitelistedEmailAddress::whereIn('email', $typeAddresses)->pluck('email');
