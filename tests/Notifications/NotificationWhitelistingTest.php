@@ -8,7 +8,6 @@ use Esign\EmailWhitelisting\Tests\Stubs\Notifications\TestNotification;
 use Esign\EmailWhitelisting\Tests\TestCase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Mail\Events\MessageSent;
-use Illuminate\Notifications\Events\NotificationSent;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Notification;
@@ -27,7 +26,7 @@ class NotificationWhitelistingTest extends TestCase
 
         $user = User::create([
             'name' => 'test',
-            'email' => 'test2@esign.eu'
+            'email' => 'test2@esign.eu',
         ]);
 
         $user->notify(new TestNotification());
@@ -46,17 +45,17 @@ class NotificationWhitelistingTest extends TestCase
 
         $userA = User::create([
             'name' => 'test1',
-            'email' => 'test@esign.eu'
+            'email' => 'test@esign.eu',
         ]);
 
         $userB = User::create([
             'name' => 'test2',
-            'email' => 'test2@esign.eu'
+            'email' => 'test2@esign.eu',
         ]);
 
         $userC = User::create([
             'name' => 'test3',
-            'email' => 'test3@esign.eu'
+            'email' => 'test3@esign.eu',
         ]);
 
         Notification::send([$userA, $userB, $userC], new TestNotification());
@@ -73,17 +72,17 @@ class NotificationWhitelistingTest extends TestCase
 
         $userA = User::create([
             'name' => 'test1',
-            'email' => 'test@esign.eu'
+            'email' => 'test@esign.eu',
         ]);
 
         $userB = User::create([
             'name' => 'test2',
-            'email' => 'test2@esign.eu'
+            'email' => 'test2@esign.eu',
         ]);
 
         $userC = User::create([
             'name' => 'test3',
-            'email' => 'test3@esign.eu'
+            'email' => 'test3@esign.eu',
         ]);
 
         Notification::send([$userA, $userB, $userC], new TestNotification());
@@ -101,7 +100,7 @@ class NotificationWhitelistingTest extends TestCase
 
         $userA = User::create([
             'name' => 'test1',
-            'email' => 'test@esign.eu'
+            'email' => 'test@esign.eu',
         ]);
 
         Notification::send([$userA], new TestNotification());
@@ -110,5 +109,4 @@ class NotificationWhitelistingTest extends TestCase
             return $event->message->getSubject() == 'test (To: test@esign.eu, )';
         });
     }
-
 }

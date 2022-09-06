@@ -8,11 +8,9 @@ use Symfony\Component\Mime\Address;
 
 class WhitelistEmailAddresses
 {
-
     public function handle(MessageSending $event): bool
     {
         if ($this->shouldWhitelistMailAddresses()) {
-
             $this->addOriginalToAddressesInSubject($event);
 
             if (config('email-whitelisting.redirect_mails')) {
@@ -32,7 +30,7 @@ class WhitelistEmailAddresses
 
     protected function shouldWhitelistMailAddresses(): bool
     {
-        return !app()->isProduction() && config('email-whitelisting.whitelist_mails');
+        return ! app()->isProduction() && config('email-whitelisting.whitelist_mails');
     }
 
     protected function addOriginalToAddressesInSubject(MessageSending $event): void

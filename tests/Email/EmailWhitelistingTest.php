@@ -25,7 +25,7 @@ class EmailWhitelistingTest extends TestCase
         $mail = Mail::to(['test@esign.eu', 'agf@esign.eu'])->send(new TestMail());
         $recipients = $this->getAddresses($mail);
 
-        $this->assertEquals(['test@esign.eu'] , $recipients);
+        $this->assertEquals(['test@esign.eu'], $recipients);
     }
 
     /** @test */
@@ -39,7 +39,7 @@ class EmailWhitelistingTest extends TestCase
         $mail = Mail::to(['test@esign.eu'])->cc(['cc@esign.eu', 'cc2@esign.eu'])->send(new TestMail());
         $ccRecipients = $this->getAddresses($mail, 'Cc');
 
-        $this->assertEquals(['cc@esign.eu'] , $ccRecipients);
+        $this->assertEquals(['cc@esign.eu'], $ccRecipients);
     }
 
     /** @test */
@@ -53,7 +53,7 @@ class EmailWhitelistingTest extends TestCase
         $mail = Mail::to(['test@esign.eu'])->bcc(['bcc@esign.eu', 'bcc2@esign.eu'])->send(new TestMail());
         $bccRecipients = $this->getAddresses($mail, 'Bcc');
 
-        $this->assertEquals(['bcc@esign.eu'] , $bccRecipients);
+        $this->assertEquals(['bcc@esign.eu'], $bccRecipients);
     }
 
     /** @test */
@@ -66,7 +66,7 @@ class EmailWhitelistingTest extends TestCase
         $mail = Mail::to(['test@esign.eu', 'agf@esign.eu'])->send(new TestMail());
         $recipients = $this->getAddresses($mail);
 
-        $this->assertEquals(['test@esign.eu', 'agf@esign.eu'] , $recipients);
+        $this->assertEquals(['test@esign.eu', 'agf@esign.eu'], $recipients);
     }
 
     /** @test */
@@ -103,7 +103,6 @@ class EmailWhitelistingTest extends TestCase
 
         $mail = Mail::to(['test@esign.eu', 'agf@esign.eu'])->send(new TestMail());
 
-        $this->assertEquals('test (To: test@esign.eu, agf@esign.eu, )' , $mail->getSymfonySentMessage()->getOriginalMessage()->getSubject());
+        $this->assertEquals('test (To: test@esign.eu, agf@esign.eu, )', $mail->getSymfonySentMessage()->getOriginalMessage()->getSubject());
     }
-
 }

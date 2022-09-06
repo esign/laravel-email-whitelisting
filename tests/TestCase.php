@@ -43,4 +43,4 @@ abstract class TestCase extends BaseTestCase
             return $item->getAddress();
         })->toArray();
     }
-} 
+}

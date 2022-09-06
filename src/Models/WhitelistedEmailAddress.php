@@ -12,7 +12,7 @@ class WhitelistedEmailAddress extends Model
 
     protected $fillable = [
         'email',
-        'redirect_email'
+        'redirect_email',
     ];
 
     protected $casts = [

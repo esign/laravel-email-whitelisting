@@ -23,7 +23,7 @@ class EmailRedirectTest extends TestCase
         $mail = Mail::to(['seppe@esign.eu', 'example@esign.eu', 'test2@example.com'])->send(new TestMail());
         $recipients = $this->getAddresses($mail, 'To');
 
-        $this->assertEquals(['test@esign.eu'] , $recipients);
+        $this->assertEquals(['test@esign.eu'], $recipients);
     }
 
     /** @test */
@@ -37,7 +37,7 @@ class EmailRedirectTest extends TestCase
         $mail = Mail::to(['seppe@esign.eu', 'example@esign.eu', 'test2@example.com'])->send(new TestMail());
         $recipients = $this->getAddresses($mail, 'To');
 
-        $this->assertEquals(['test@esign.eu', 'test2@esign.eu'] , $recipients);
+        $this->assertEquals(['test@esign.eu', 'test2@esign.eu'], $recipients);
     }
 
     /** @test */
@@ -65,6 +65,4 @@ class EmailRedirectTest extends TestCase
 
         $this->assertEmpty($bccRecipients);
     }
-
-
 }

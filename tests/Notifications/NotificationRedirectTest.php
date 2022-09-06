@@ -8,7 +8,6 @@ use Esign\EmailWhitelisting\Tests\Stubs\Notifications\TestNotification;
 use Esign\EmailWhitelisting\Tests\TestCase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Mail\Events\MessageSent;
-use Illuminate\Notifications\Events\NotificationSent;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Notification;
@@ -27,12 +26,12 @@ class NotificationRedirectTest extends TestCase
 
         $userToRedirectTo = User::create([
             'name' => 'test',
-            'email' => 'test@esign.eu'
+            'email' => 'test@esign.eu',
         ]);
 
         $user = User::create([
             'name' => 'test',
-            'email' => 'test2@esign.eu'
+            'email' => 'test2@esign.eu',
         ]);
 
         $user->notify(new TestNotification());
@@ -52,32 +51,32 @@ class NotificationRedirectTest extends TestCase
 
         $userA = User::create([
             'name' => 'test1',
-            'email' => 'test@esign.eu'
+            'email' => 'test@esign.eu',
         ]);
 
         $userB = User::create([
             'name' => 'test2',
-            'email' => 'test2@esign.eu'
+            'email' => 'test2@esign.eu',
         ]);
 
         $userC = User::create([
             'name' => 'test3',
-            'email' => 'test3@esign.eu'
+            'email' => 'test3@esign.eu',
         ]);
 
         $userD = User::create([
             'name' => 'test4',
-            'email' => 'seppe@esign.eu'
+            'email' => 'seppe@esign.eu',
         ]);
 
         $userE = User::create([
             'name' => 'test5',
-            'email' => 'redirect1@esign.eu'
+            'email' => 'redirect1@esign.eu',
         ]);
 
         Notification::send([$userA, $userB, $userC, $userD], new TestNotification());
 
-        Event::assertDispatchedTimes(MessageSent::class,4);
+        Event::assertDispatchedTimes(MessageSent::class, 4);
 
         Event::assertDispatched(MessageSent::class, function (MessageSent $event) {
             return $event->message->getTo()[0]->getAddress() == 'redirect1@esign.eu';
@@ -95,37 +94,36 @@ class NotificationRedirectTest extends TestCase
 
         $userA = User::create([
             'name' => 'test1',
-            'email' => 'test@esign.eu'
+            'email' => 'test@esign.eu',
         ]);
 
         $userB = User::create([
             'name' => 'test2',
-            'email' => 'test2@esign.eu'
+            'email' => 'test2@esign.eu',
         ]);
 
         $userC = User::create([
             'name' => 'test3',
-            'email' => 'test3@esign.eu'
+            'email' => 'test3@esign.eu',
         ]);
 
         $userD = User::create([
             'name' => 'test4',
-            'email' => 'seppe@esign.eu'
+            'email' => 'seppe@esign.eu',
         ]);
 
         $userE = User::create([
             'name' => 'test5',
-            'email' => 'redirect1@esign.eu'
+            'email' => 'redirect1@esign.eu',
         ]);
 
         $userF = User::create([
             'name' => 'test5',
-            'email' => 'redirect2@esign.eu'
+            'email' => 'redirect2@esign.eu',
         ]);
 
         Notification::send([$userA, $userB, $userC, $userD], new TestNotification());
 
-        Event::assertDispatchedTimes(MessageSent::class,4);
+        Event::assertDispatchedTimes(MessageSent::class, 4);
     }
-
 }
