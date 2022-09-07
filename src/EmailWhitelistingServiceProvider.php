@@ -2,6 +2,7 @@
 
 namespace Esign\EmailWhitelisting;
 
+use Esign\EmailWhitelisting\Contracts\EmailWhitelistingDriverContract;
 use Esign\EmailWhitelisting\Providers\EventServiceProvider;
 use Illuminate\Support\ServiceProvider;
 
@@ -22,6 +23,7 @@ class EmailWhitelistingServiceProvider extends ServiceProvider
     {
         $this->mergeConfigFrom($this->configPath(), 'email-whitelisting');
         $this->app->register(EventServiceProvider::class);
+        $this->app->bind(EmailWhitelistingDriverContract::class, config('email-whitelisting.driver'));
     }
 
     protected function configPath(): string

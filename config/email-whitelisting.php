@@ -8,9 +8,9 @@ return [
 
     /**
      * This is the driver responsible for providing whitelisted email addresses.
-     * OPTIONS: config | database
+     * It should implement the EmailWhitelistingDriverContract interface.
      */
-    'driver' => env('EMAIL_WHITELISTING_DRIVER', 'config'),
+    'driver' => \Esign\EmailWhitelisting\Drivers\ConfigurationDriver::class,
 
     /**
      * Enabling this setting will cause all outgoing emails to be sent to the

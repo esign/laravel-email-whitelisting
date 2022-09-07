@@ -2,6 +2,8 @@
 
 namespace Esign\EmailWhitelisting\Tests\Email;
 
+use Esign\EmailWhitelisting\Contracts\EmailWhitelistingDriverContract;
+use Esign\EmailWhitelisting\Drivers\ConfigurationDriver;
 use Esign\EmailWhitelisting\Models\WhitelistedEmailAddress;
 use Esign\EmailWhitelisting\Tests\Support\Mail\TestMail;
 use Esign\EmailWhitelisting\Tests\TestCase;
@@ -109,7 +111,7 @@ class EmailWhitelistingTest extends TestCase
     /** @test */
     public function it_can_use_the_config_driver()
     {
-        Config::set('email-whitelisting.driver', 'config');
+        $this->app->bind(EmailWhitelistingDriverContract::class, ConfigurationDriver::class);
         Config::set('email-whitelisting.mail_addresses', ['test@esign.eu']);
 
         $mail = Mail::to(['test@esign.eu', 'agf@esign.eu'])->send(new TestMail());
@@ -144,7 +146,7 @@ class EmailWhitelistingTest extends TestCase
     /** @test */
     public function it_can_use_wildcards_with_the_config_driver()
     {
-        Config::set('email-whitelisting.driver', 'config');
+        $this->app->bind(EmailWhitelistingDriverContract::class, ConfigurationDriver::class);
         Config::set('email-whitelisting.mail_addresses', ['*@esign.eu']);
 
         $mail = Mail::to(['test@esign.eu', 'agf@esign.eu', 'test2@esign.eu', 'external@gmail.com'])->send(new TestMail());

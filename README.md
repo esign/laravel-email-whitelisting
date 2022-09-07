@@ -31,9 +31,9 @@ return [
 
     /**
      * This is the driver responsible for providing whitelisted email addresses.
-     * OPTIONS: config | database
+     * It should implement the EmailWhitelistingDriverContract interface.
      */
-    'driver' => env('EMAIL_WHITELISTING_DRIVER', 'config'),
+    'driver' => \Esign\EmailWhitelisting\Drivers\ConfigurationDriver::class,
 
     /**
      * Enabling this setting will cause all outgoing emails to be sent to the
@@ -54,8 +54,7 @@ return [
 
 ## Usage
 This package is disabled by default. To enable it you may set the `EMAIL_WHITELISTING_ENABLED` env variable to `true`.
-This package ships with both a `config` and `database` driver out of the box.
-You may use either of those by setting the `EMAIL_WHITELISTING_DRIVER` environment variable.
+It ships with both a `ConfigurationDriver` and `DatabaseDriver` out of the box.
 
 ### Config
 You may define whitelisted email addresses for the config driver under the `mail_addresses` key.

@@ -2,6 +2,8 @@
 
 namespace Esign\EmailWhitelisting\Tests;
 
+use Esign\EmailWhitelisting\Contracts\EmailWhitelistingDriverContract;
+use Esign\EmailWhitelisting\Drivers\DatabaseDriver;
 use Esign\EmailWhitelisting\EmailWhitelistingServiceProvider;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Mail\SentMessage;
@@ -20,7 +22,7 @@ abstract class TestCase extends BaseTestCase
     protected function getEnvironmentSetUp($app)
     {
         Config::set('email-whitelisting.enabled', true);
-        Config::set('email-whitelisting.driver', 'database');
+        $app->bind(EmailWhitelistingDriverContract::class, DatabaseDriver::class);
         Schema::create('users', function (Blueprint $table) {
             $table->id();
             $table->string('name');

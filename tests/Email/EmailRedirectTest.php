@@ -2,6 +2,8 @@
 
 namespace Esign\EmailWhitelisting\Tests\Email;
 
+use Esign\EmailWhitelisting\Contracts\EmailWhitelistingDriverContract;
+use Esign\EmailWhitelisting\Drivers\ConfigurationDriver;
 use Esign\EmailWhitelisting\Models\WhitelistedEmailAddress;
 use Esign\EmailWhitelisting\Tests\Support\Mail\TestMail;
 use Esign\EmailWhitelisting\Tests\TestCase;
@@ -68,7 +70,7 @@ class EmailRedirectTest extends TestCase
     /** @test */
     public function it_can_use_the_config_driver()
     {
-        Config::set('email-whitelisting.driver', 'config');
+        $this->app->bind(EmailWhitelistingDriverContract::class, ConfigurationDriver::class);
         Config::set('email-whitelisting.mail_addresses', ['test@esign.eu']);
 
         $mail = Mail::to(['agf@esign.eu', 'example@esign.eu'])->send(new TestMail());
