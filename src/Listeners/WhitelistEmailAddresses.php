@@ -15,7 +15,7 @@ class WhitelistEmailAddresses
         if ($this->shouldWhitelistMailAddresses()) {
             $this->addOriginalEmailAddressesInSubject($event);
 
-            if (config('email-whitelisting.redirect_mails')) {
+            if (config('email-whitelisting.redirecting_enabled')) {
                 $this->redirectMail($event);
             } else {
                 $this->whitelistMailAddresses($event);

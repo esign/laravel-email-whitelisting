@@ -4,8 +4,9 @@
 [![Total Downloads](https://img.shields.io/packagist/dt/esign/laravel-email-whitelisting.svg?style=flat-square)](https://packagist.org/packages/esign/laravel-email-whitelisting)
 ![GitHub Actions](https://github.com/esign/laravel-email-whitelisting/actions/workflows/main.yml/badge.svg)
 
-This package allows you to whitelist email address for outgoing emails on your test or staging environment. 
-This way you can safely test your outgoing emails without worrying about sending test emails to external users.  
+This package allows you to whitelist email addresses for outgoing emails.
+This way you have control over what addresses should be allowed to receive mails.
+This comes in handy when testing on development / staging environments.
 
 ## Installation
 
@@ -15,57 +16,76 @@ You can install the package via composer:
 composer require esign/laravel-email-whitelisting
 ```
 
-You can choose to configure email addresses to whitelist using the config driver or the database driver.
-Below you will find the two configuration methods.
-
-### Config
-If you like to configure the email addresses in a configuration file you'll need to publish the config file.
+Next up, you can publish the configuration file:
 ```bash
 php artisan vendor:publish --provider="Esign\EmailWhitelisting\EmailWhitelistingServiceProvider" --tag="config"
 ```
 
+The config file will be published as `config/email-whitelisting.php` with the following contents:
+```php
+return [
+    /**
+     * This is used to disable or enable the use of this package.
+     */
+    'enabled' => env('EMAIL_WHITELISTING_ENABLED', false),
+
+    /**
+     * This is the driver responsible for providing whitelisted email addresses.
+     * OPTIONS: config | database
+     */
+    'driver' => env('EMAIL_WHITELISTING_DRIVER', 'config'),
+
+    /**
+     * Enabling this setting will cause all outgoing emails to be sent to the
+     * configured email adresses, disregarding if they're present in To, Cc or Bcc.
+     * When using the config driver these will be the addresses defined in the 'mail_addresses' config key.
+     * When using the database driver these will be the addresses where 'redirect_email' is true.
+     */
+    'redirecting_enabled' => env('EMAIL_WHITELISTING_REDIRECTING_ENABLED', false),
+
+    /**
+     * When using the config driver you can define email addresses in this array.
+     */
+    'mail_addresses' => [
+        // 'john@example.com'
+    ],
+];
+```
+
+## Usage
+This package is disabled by default. To enable it you may set the `EMAIL_WHITELISTING_ENABLED` env variable to `true`.
+This package ships with both a `config` and `database` driver out of the box.
+You may use either of those by setting the `EMAIL_WHITELISTING_DRIVER` environment variable.
+
+### Config
+You may define whitelisted email addresses for the config driver under the `mail_addresses` key.
 ### Database
-In case you would like to configure the email addresses in your database this package comes with a migration to store your whitelisted email addresses. 
-You can publish this migration using:
+In case you want to configure email whitelisting using the database this package comes with a database driver out of the box.
+Make sure to publish the migration before making use of this driver:
 ```bash
 php artisan vendor:publish --provider="Esign\EmailWhitelisting\EmailWhitelistingServiceProvider" --tag="migrations"
 ```
 
-In your .env file you may use the below config to use the package the way you want.
+Whitelisted email addresses can be created in the following way:
+```php
+use Esign\EmailWhitelisting\Models\WhitelistedEmailAddress;
 
-* `WHITELIST_MAIL_DRIVER` this has two available values' `config` (default) and `database`.
-  * When this is set to `config` the package will use the `mail_addresses` array set in the [config file](config/email-whitelisting.php).
-  * When set to `database` The package will use the addresses from your `whitelist_email_addresses` table.
+WhitelistedEmailAddress::create(['email' => 'john@example.com']);
+```
 
-* `WHITELIST_MAILS` Is a boolean used to determine if the whitelist package should be used. 
-When set to false there will be no email whitelisting or email redirects.
+### Redirecting emails
+In some cases you might want to redirect all outgoing mail to certain addresses.
+This can be achieved by setting the env variable `EMAIL_WHITELISTING_REDIRECTING_ENABLED` to true.
+When using the database driver you may specify to which email addresses outgoing mail will be redirected, by setting the `redirect_email` column value to true.
+When using the config driver no extra configuration is required. Email addresses defined in the `mail_addresses` will be used.
+### Wildcards
+In case you need to cover lots of email addresses, this package supports using wildcards.
+By using an `*` you're able to cover a full domain, e.g. `*@esign.eu`.
 
-* The default setting for this package is whitelisting emails. 
-To redirect all emails to the configured email addresses set the `REDIRECT_MAILS` to true.
-
-## Usage
-
-### Whitelist
-For whitelisting email addresses this package will use the configured email addresses in the `whitelist_email_addresses` table or `mail_addresses` array in the config.
-The whitelisting will automatically apply when `WHITELIST_MAILS` is set to true and `REDIRECT_MAILS` is set to false.
-
-### Redirect
-If you choose to redirect the emails you need to set `REDIRECT_MAILS=true` in your .env file.
-Next if you chose the database driver you'll need to set the `redirect_email` boolean to true on all the email addresses that you want to redirect the emails to in the `whitelist_email_addresses` table.
-If you chose the config driver you don't need to configure any extras.
-
-## Wildcards
-You can use wildcards for your email whitelisting by adding a * in front of the address. 
-For example `*@esign.eu` will allow all Esign email addresses.
-
-## Notifications
-This package can also whitelist or redirect notifications that are sent through the mail channel.
-This works the same way as normal emails.
-
-## Notes
-* When there are no emails to send a mail to due to the email not containing any "to"
-email addresses in the email whitelisting config the email will not be send. This will not throw an error.
-* The package will always add the original receivers of the mail in the subject of the mail. For example (To: example@esign.eu, Cc: example2@esign.eu).
+### Notes
+* Notifications sent through the `mail` channel will be whitelisted as well.
+* When there are no matching whitelisted email addresses found, the email will be cancelled.
+* This package will append the original receivers to the subject of the outgoing mail. e.g. `My cool mail subject (To: john@example.com) (Cc: jane@example.com).
 
 ### Testing
 

@@ -7,19 +7,23 @@ return [
     'enabled' => env('EMAIL_WHITELISTING_ENABLED', false),
 
     /**
-     * You can change the driver option to config or database.
-     * The config driver will use email addresses in the mail_addresses array in this file.
-     * The database driver will use mail addresses in the whitelist_email_addresses table in your database
+     * This is the driver responsible for providing whitelisted email addresses.
      * OPTIONS: config | database
      */
-    'driver' => env('WHITELIST_MAIL_DRIVER', 'config'),
+    'driver' => env('EMAIL_WHITELISTING_DRIVER', 'config'),
 
     /**
-     * Set this option to true to redirect all mails to the configured addresses.
+     * Enabling this setting will cause all outgoing emails to be sent to the
+     * configured email adresses, disregarding if they're present in To, Cc or Bcc.
+     * When using the config driver these will be the addresses defined in the 'mail_addresses' config key.
+     * When using the database driver these will be the addresses where 'redirect_email' is true.
      */
-    'redirect_mails' => env('REDIRECT_MAILS', false),
+    'redirecting_enabled' => env('EMAIL_WHITELISTING_REDIRECTING_ENABLED', false),
 
+    /**
+     * When using the config driver you can define email addresses in this array.
+     */
     'mail_addresses' => [
-
+        // 'john@example.com'
     ],
 ];
