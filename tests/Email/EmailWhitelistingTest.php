@@ -106,11 +106,17 @@ class EmailWhitelistingTest extends TestCase
         Config::set('email-whitelisting.driver', 'database');
         Config::set('email-whitelisting.enabled', true);
         Config::set('email-whitelisting.redirect_mails', false);
-        WhitelistedEmailAddress::create(['email' => 'test@esign.eu']);
+        WhitelistedEmailAddress::create(['email' => 'testA@esign.eu']);
 
-        $mail = Mail::to(['test@esign.eu', 'agf@esign.eu'])->send(new TestMail());
+        $mail = Mail::to(['testA@esign.eu', 'testB@esign.eu'])
+            ->cc('testC@esign.eu')
+            ->bcc('testD@esign.eu')
+            ->send(new TestMail());
 
-        $this->assertEquals('test (To: test@esign.eu, agf@esign.eu, )', $mail->getSymfonySentMessage()->getOriginalMessage()->getSubject());
+        $this->assertEquals(
+            'test (To: testA@esign.eu, testB@esign.eu) (Cc: testC@esign.eu) (Bcc: testD@esign.eu)',
+            $mail->getSymfonySentMessage()->getOriginalMessage()->getSubject()
+        );
     }
 
     /** @test */

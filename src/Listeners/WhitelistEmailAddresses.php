@@ -14,7 +14,7 @@ class WhitelistEmailAddresses
     public function handle(MessageSending $event): bool
     {
         if ($this->shouldWhitelistMailAddresses()) {
-            $this->addOriginalToAddressesInSubject($event);
+            $this->addOriginalEmailAddressesInSubject($event);
 
             if (config('email-whitelisting.redirect_mails')) {
                 $this->redirectMail($event);
@@ -36,23 +36,32 @@ class WhitelistEmailAddresses
         return ! app()->isProduction() && config('email-whitelisting.enabled');
     }
 
-    protected function addOriginalToAddressesInSubject(MessageSending $event): void
+    protected function addOriginalEmailAddressesInSubject(MessageSending $event): void
     {
-        $subject = $event->message->getSubject() . ' (';
+        $originalFormattedEmailAddresses = collect([
+            'To' => $event->message->getTo(),
+            'Cc' => $event->message->getCc(),
+            'Bcc' => $event->message->getBcc(),
+        ])
+            // Map the array of address objects to an array of actual email addresses
+            ->map(function (array $addressesOfSendingType) {
+                return array_map(
+                    fn (Address $address) => $address->getAddress(),
+                    $addressesOfSendingType
+                );
+            })
+            // Let's filter out any empty arrays
+            ->filter()
+            // Format the sending type with the corresponding email addresses
+            ->map(function (array $addressesOfSendingType, string $sendingType) {
+                return "($sendingType: " . implode(', ', $addressesOfSendingType) . ")";
+            })
+            // Add a space between the sending types for some better readability
+            ->implode(' ');
 
-        foreach (['To', 'Cc', 'Bcc'] as $type) {
-            if ($originalAddresses = $event->message->{'get' . $type}()) {
-                $typeAddresses = collect($originalAddresses)->map(function (Address $item) {
-                    return $item->getAddress();
-                });
-
-                $subject .= $type . ': ' . $typeAddresses->implode(', ') . ', ';
-            }
-        }
-
-        $subject .= ')';
-
-        $event->message->subject($subject);
+        $event->message->subject(
+            "{$event->message->getSubject()} {$originalFormattedEmailAddresses}"
+        );
     }
 
     protected function whitelistMailAddresses(MessageSending $event): void

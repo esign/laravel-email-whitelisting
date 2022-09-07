@@ -110,7 +110,7 @@ class NotificationWhitelistingTest extends TestCase
         Notification::send([$userA], new TestNotification());
 
         Event::assertDispatched(MessageSent::class, function (MessageSent $event) {
-            return $event->message->getSubject() == 'test (To: test@esign.eu, )';
+            return $event->message->getSubject() == 'test (To: test@esign.eu)';
         });
     }
 }
