@@ -6,7 +6,6 @@ use Esign\EmailWhitelisting\Contracts\EmailWhitelistingDriverContract;
 use Esign\EmailWhitelisting\Support\MessageSendingHelper;
 use Illuminate\Mail\Events\MessageSending;
 
-
 class WhitelistEmailAddresses
 {
     public function handle(MessageSending $messageSendingEvent): bool

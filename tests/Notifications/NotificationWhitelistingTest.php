@@ -2,7 +2,6 @@
 
 namespace Esign\EmailWhitelisting\Tests\Notifications;
 
-use Esign\EmailWhitelisting\Contracts\EmailWhitelistingDriverContract;
 use Esign\EmailWhitelisting\Models\WhitelistedEmailAddress;
 use Esign\EmailWhitelisting\Tests\Support\Models\User;
 use Esign\EmailWhitelisting\Tests\Support\Notifications\TestNotification;
