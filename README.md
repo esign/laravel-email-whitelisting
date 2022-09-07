@@ -84,7 +84,7 @@ By using an `*` you're able to cover a full domain, e.g. `*@esign.eu`.
 ### Notes
 * Notifications sent through the `mail` channel will be whitelisted as well.
 * When there are no matching whitelisted email addresses found, the email will be cancelled.
-* This package will append the original receivers to the subject of the outgoing mail. e.g. `My cool mail subject (To: john@example.com) (Cc: jane@example.com).
+* This package will append the original receivers to the subject of the outgoing mail. e.g. `My cool mail subject (To: john@example.com) (Cc: jane@example.com)`.
 
 ### Testing
 
