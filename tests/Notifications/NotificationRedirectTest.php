@@ -3,8 +3,8 @@
 namespace Esign\EmailWhitelisting\Tests\Notifications;
 
 use Esign\EmailWhitelisting\Models\WhitelistedEmailAddress;
-use Esign\EmailWhitelisting\Tests\Stubs\Models\User;
-use Esign\EmailWhitelisting\Tests\Stubs\Notifications\TestNotification;
+use Esign\EmailWhitelisting\Tests\Support\Models\User;
+use Esign\EmailWhitelisting\Tests\Support\Notifications\TestNotification;
 use Esign\EmailWhitelisting\Tests\TestCase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Mail\Events\MessageSent;

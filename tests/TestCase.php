@@ -3,7 +3,9 @@
 namespace Esign\EmailWhitelisting\Tests;
 
 use Esign\EmailWhitelisting\EmailWhitelistingServiceProvider;
+use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Mail\SentMessage;
+use Illuminate\Support\Facades\Schema;
 use Orchestra\Testbench\TestCase as BaseTestCase;
 use Symfony\Component\Mime\Address;
 
@@ -16,13 +18,16 @@ abstract class TestCase extends BaseTestCase
 
     protected function getEnvironmentSetUp($app)
     {
-        $WhitelistEmailAddressesMigration = include __DIR__ . '/../database/migrations/create_whitelist_email_addresses_table.php.stub';
+        Schema::create('users', function (Blueprint $table) {
+            $table->id();
+            $table->string('name');
+            $table->string('email')->unique();
+            $table->timestamp('created_at')->useCurrent();
+            $table->timestamp('updated_at')->useCurrent()->useCurrentOnUpdate();
+        });
 
-        // this migration is only for tests
-        $userMigration = include __DIR__ . '/Stubs/Migrations/create_users_table.php.stub';
-
-        $WhitelistEmailAddressesMigration->up();
-        $userMigration->up();
+        $whitelistEmailAddressesMigration = include __DIR__ . '/../database/migrations/create_whitelist_email_addresses_table.php.stub';
+        $whitelistEmailAddressesMigration->up();
     }
 
     /**

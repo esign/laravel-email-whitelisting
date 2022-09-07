@@ -3,7 +3,7 @@
 namespace Esign\EmailWhitelisting\Tests\Email;
 
 use Esign\EmailWhitelisting\Models\WhitelistedEmailAddress;
-use Esign\EmailWhitelisting\Tests\Stubs\Mail\TestMail;
+use Esign\EmailWhitelisting\Tests\Support\Mail\TestMail;
 use Esign\EmailWhitelisting\Tests\TestCase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Mail\Events\MessageSending;

@@ -1,6 +1,6 @@
 <?php
 
-namespace Esign\EmailWhitelisting\Tests\Stubs\Notifications;
+namespace Esign\EmailWhitelisting\Tests\Support\Notifications;
 
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Messages\MailMessage;
