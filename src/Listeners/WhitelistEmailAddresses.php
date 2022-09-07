@@ -94,18 +94,18 @@ class WhitelistEmailAddresses
         })->toArray();
     }
 
-    protected function whitelistEmailsFromDatabase(Collection $typeAddresses): array
+    protected function whitelistEmailsFromDatabase(Collection $emailAddresses): array
     {
-        $whitelistedEmailAddresses = WhitelistedEmailAddress::whereIn('email', $typeAddresses)->pluck('email');
-        $wildcards = WhitelistedEmailAddress::where('email', 'like', '*%')->pluck('email')->map(function (string $wildcard) {
-            return Str::after($wildcard, '*');
+        $whitelistedEmailAddresses = WhitelistedEmailAddress::query()
+            ->whereIn('email', $emailAddresses)
+            ->orWhere('email', 'like', '*%')
+            ->pluck('email');
+
+        return $emailAddresses->filter(function (string $emailAddress) use ($whitelistedEmailAddresses) {
+            return $whitelistedEmailAddresses->contains(function (string $whiteListedEmailAddress) use ($emailAddress) {
+                return Str::is($whiteListedEmailAddress, $emailAddress);
+            });
         })->toArray();
-
-        $addressesFromWildCards = $typeAddresses->where(function (string $typeAddress) use ($wildcards) {
-            return Str::endsWith($typeAddress, $wildcards);
-        });
-
-        return array_unique([...$whitelistedEmailAddresses, ...$addressesFromWildCards]);
     }
 
     protected function redirectMail(MessageSending $event): void
