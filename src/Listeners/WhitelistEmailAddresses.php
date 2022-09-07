@@ -12,17 +12,17 @@ class WhitelistEmailAddresses
 {
     public function handle(MessageSending $event): bool
     {
-        if ($this->shouldWhitelistMailAddresses()) {
-            $this->addOriginalEmailAddressesInSubject($event);
+        if (config('email-whitelisting.enabled')) {
+            $this->appendOriginalEmailAddressesToSubject($event);
 
             if (config('email-whitelisting.redirecting_enabled')) {
-                $this->redirectMail($event);
+                $this->redirectEmailAddresses($event);
             } else {
-                $this->whitelistMailAddresses($event);
+                $this->whitelistEmailAddresses($event);
             }
 
+            // Let's cancel the email when there's no one to receive it.
             if (count($event->message->getTo()) == 0) {
-                // cancel mail when no send to addresses
                 return false;
             }
         }
@@ -30,12 +30,7 @@ class WhitelistEmailAddresses
         return true;
     }
 
-    protected function shouldWhitelistMailAddresses(): bool
-    {
-        return (bool) config('email-whitelisting.enabled');
-    }
-
-    protected function addOriginalEmailAddressesInSubject(MessageSending $event): void
+    protected function appendOriginalEmailAddressesToSubject(MessageSending $event): void
     {
         $originalFormattedEmailAddresses = $this
             ->getEmailAddressesGroupedBySendingType($event)
@@ -50,7 +45,7 @@ class WhitelistEmailAddresses
         );
     }
 
-    protected function whitelistMailAddresses(MessageSending $event): void
+    protected function whitelistEmailAddresses(MessageSending $event): void
     {
         $this
             ->getEmailAddressesGroupedBySendingType($event)
@@ -111,7 +106,7 @@ class WhitelistEmailAddresses
         });
     }
 
-    protected function redirectMail(MessageSending $event): void
+    protected function redirectEmailAddresses(MessageSending $event): void
     {
         if (config('email-whitelisting.driver') == 'config') {
             $emailsSendTo = config('email-whitelisting.mail_addresses');
