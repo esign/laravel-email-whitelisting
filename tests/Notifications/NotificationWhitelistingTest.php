@@ -21,7 +21,6 @@ class NotificationWhitelistingTest extends TestCase
     {
         Config::set('email-whitelisting.driver', 'database');
         Event::fake(MessageSent::class);
-        Config::set('email-whitelisting.enabled', true);
         Config::set('email-whitelisting.redirect_mails', false);
         WhitelistedEmailAddress::create(['email' => 'test@esign.eu']);
 
@@ -40,7 +39,6 @@ class NotificationWhitelistingTest extends TestCase
     {
         Config::set('email-whitelisting.driver', 'database');
         Event::fake(MessageSent::class);
-        Config::set('email-whitelisting.enabled', true);
         Config::set('email-whitelisting.redirect_mails', false);
         WhitelistedEmailAddress::create(['email' => 'test@esign.eu']);
         WhitelistedEmailAddress::create(['email' => 'test2@esign.eu']);
@@ -70,7 +68,6 @@ class NotificationWhitelistingTest extends TestCase
     {
         Config::set('email-whitelisting.driver', 'database');
         Event::fake(MessageSent::class);
-        Config::set('email-whitelisting.enabled', true);
         Config::set('email-whitelisting.redirect_mails', false);
 
         $userA = User::create([
@@ -96,9 +93,8 @@ class NotificationWhitelistingTest extends TestCase
     /** @test */
     public function it_can_redirect_a_notification_to_another_user()
     {
-        Config::set('email-whitelisting.driver', 'database');
         Event::fake(MessageSent::class);
-        Config::set('email-whitelisting.enabled', true);
+        Config::set('email-whitelisting.driver', 'database');
         Config::set('email-whitelisting.redirect_mails', false);
         WhitelistedEmailAddress::create(['email' => 'test@esign.eu']);
 

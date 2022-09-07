@@ -5,6 +5,7 @@ namespace Esign\EmailWhitelisting\Tests;
 use Esign\EmailWhitelisting\EmailWhitelistingServiceProvider;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Mail\SentMessage;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Schema;
 use Orchestra\Testbench\TestCase as BaseTestCase;
 use Symfony\Component\Mime\Address;
@@ -18,6 +19,7 @@ abstract class TestCase extends BaseTestCase
 
     protected function getEnvironmentSetUp($app)
     {
+        Config::set('email-whitelisting.enabled', true);
         Schema::create('users', function (Blueprint $table) {
             $table->id();
             $table->string('name');

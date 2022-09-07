@@ -21,7 +21,6 @@ class NotificationRedirectTest extends TestCase
     {
         Config::set('email-whitelisting.driver', 'database');
         Event::fake(MessageSent::class);
-        Config::set('email-whitelisting.enabled', true);
         Config::set('email-whitelisting.redirect_mails', true);
         WhitelistedEmailAddress::create(['email' => 'test@esign.eu', 'redirect_email' => true]);
 
@@ -47,7 +46,6 @@ class NotificationRedirectTest extends TestCase
     {
         Config::set('email-whitelisting.driver', 'database');
         Event::fake(MessageSent::class);
-        Config::set('email-whitelisting.enabled', true);
         Config::set('email-whitelisting.redirect_mails', true);
         WhitelistedEmailAddress::create(['email' => 'redirect1@esign.eu', 'redirect_email' => true]);
 
@@ -90,7 +88,6 @@ class NotificationRedirectTest extends TestCase
     {
         Config::set('email-whitelisting.driver', 'database');
         Event::fake(MessageSent::class);
-        Config::set('email-whitelisting.enabled', true);
         Config::set('email-whitelisting.redirect_mails', true);
         WhitelistedEmailAddress::create(['email' => 'redirect1@esign.eu', 'redirect_email' => true]);
         WhitelistedEmailAddress::create(['email' => 'redirect2@esign.eu', 'redirect_email' => true]);
