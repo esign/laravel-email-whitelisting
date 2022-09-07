@@ -4,7 +4,6 @@ namespace Esign\EmailWhitelisting\Listeners;
 
 use Esign\EmailWhitelisting\Models\WhitelistedEmailAddress;
 use Illuminate\Mail\Events\MessageSending;
-use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 use Symfony\Component\Mime\Address;
@@ -38,25 +37,12 @@ class WhitelistEmailAddresses
 
     protected function addOriginalEmailAddressesInSubject(MessageSending $event): void
     {
-        $originalFormattedEmailAddresses = collect([
-            'To' => $event->message->getTo(),
-            'Cc' => $event->message->getCc(),
-            'Bcc' => $event->message->getBcc(),
-        ])
-            // Map the array of address objects to an array of actual email addresses
-            ->map(function (array $addressesOfSendingType) {
-                return array_map(
-                    fn (Address $address) => $address->getAddress(),
-                    $addressesOfSendingType
-                );
-            })
-            // Let's filter out any empty arrays
+        $originalFormattedEmailAddresses = $this
+            ->getEmailAddressesGroupedBySendingType($event)
             ->filter()
-            // Format the sending type with the corresponding email addresses
             ->map(function (array $addressesOfSendingType, string $sendingType) {
                 return "($sendingType: " . implode(', ', $addressesOfSendingType) . ")";
             })
-            // Add a space between the sending types for some better readability
             ->implode(' ');
 
         $event->message->subject(
@@ -66,21 +52,17 @@ class WhitelistEmailAddresses
 
     protected function whitelistMailAddresses(MessageSending $event): void
     {
-        foreach (['To', 'Cc', 'Bcc'] as $type) {
-            if ($originalAddresses = $event->message->{'get' . $type}()) {
-                $typeAddresses = collect($originalAddresses)->map(function (Address $item) {
-                    return $item->getAddress();
-                });
-
+        $this
+            ->getEmailAddressesGroupedBySendingType($event)
+            ->each(function (array $emailAddresses, string $sendingType) use ($event) {
                 if (config('email-whitelisting.driver') == 'config') {
-                    $emailsSendTo = $this->whitelistEmailsFromConfig($typeAddresses);
-                    $event->message->{strtolower($type)}(...$emailsSendTo);
+                    $whitelistedEmailAddresses = $this->whitelistEmailsFromConfig(collect($emailAddresses));
+                    $event->message->{strtolower($sendingType)}(...$whitelistedEmailAddresses);
                 } elseif (config('email-whitelisting.driver') == 'database') {
-                    $emailsSendTo = $this->whitelistEmailsFromDatabase($typeAddresses);
-                    $event->message->{strtolower($type)}(...$emailsSendTo);
+                    $whitelistedEmailAddresses = $this->whitelistEmailsFromDatabase(collect($emailAddresses));
+                    $event->message->{strtolower($sendingType)}(...$whitelistedEmailAddresses);
                 }
-            }
-        }
+            });
     }
 
     protected function whitelistEmailsFromConfig(Collection $emailAddresses): array
@@ -112,6 +94,20 @@ class WhitelistEmailAddresses
             return $whitelistedEmailAddresses->contains(function (string $whiteListedEmailAddress) use ($emailAddress) {
                 return Str::is($whiteListedEmailAddress, $emailAddress);
             });
+        });
+    }
+
+    protected function getEmailAddressesGroupedBySendingType(MessageSending $messageSendingEvent): Collection
+    {
+        return collect([
+            'To' => $messageSendingEvent->message->getTo(),
+            'Cc' => $messageSendingEvent->message->getCc(),
+            'Bcc' => $messageSendingEvent->message->getBcc(),
+        ])->map(function (array $addressesOfSendingType) {
+            return array_map(
+                fn (Address $address) => $address->getAddress(),
+                $addressesOfSendingType
+            );
         });
     }
 
