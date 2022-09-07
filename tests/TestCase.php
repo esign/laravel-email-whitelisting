@@ -20,6 +20,7 @@ abstract class TestCase extends BaseTestCase
     protected function getEnvironmentSetUp($app)
     {
         Config::set('email-whitelisting.enabled', true);
+        Config::set('email-whitelisting.driver', 'database');
         Schema::create('users', function (Blueprint $table) {
             $table->id();
             $table->string('name');

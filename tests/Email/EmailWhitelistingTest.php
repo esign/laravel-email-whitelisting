@@ -25,7 +25,6 @@ class EmailWhitelistingTest extends TestCase
     /** @test */
     public function it_can_whitelist_email_addresses()
     {
-        Config::set('email-whitelisting.driver', 'database');
         WhitelistedEmailAddress::create(['email' => 'test@esign.eu']);
 
         $mail = Mail::to(['test@esign.eu', 'agf@esign.eu'])->send(new TestMail());
@@ -37,7 +36,6 @@ class EmailWhitelistingTest extends TestCase
     /** @test */
     public function it_can_whitelist_email_addresses_in_cc()
     {
-        Config::set('email-whitelisting.driver', 'database');
         WhitelistedEmailAddress::create(['email' => 'test@esign.eu']);
         WhitelistedEmailAddress::create(['email' => 'cc@esign.eu']);
 
@@ -50,7 +48,6 @@ class EmailWhitelistingTest extends TestCase
     /** @test */
     public function it_can_whitelist_email_addresses_in_bcc()
     {
-        Config::set('email-whitelisting.driver', 'database');
         WhitelistedEmailAddress::create(['email' => 'test@esign.eu']);
         WhitelistedEmailAddress::create(['email' => 'bcc@esign.eu']);
 
@@ -63,7 +60,6 @@ class EmailWhitelistingTest extends TestCase
     /** @test */
     public function it_can_disable_email_whitelisting()
     {
-        Config::set('email-whitelisting.driver', 'database');
         Config::set('email-whitelisting.enabled', false);
         WhitelistedEmailAddress::create(['email' => 'test@esign.eu']);
 
@@ -76,7 +72,6 @@ class EmailWhitelistingTest extends TestCase
     /** @test */
     public function it_wont_throw_an_error_when_no_valid_email_addresses_are_given()
     {
-        Config::set('email-whitelisting.driver', 'database');
         WhitelistedEmailAddress::create(['email' => 'test@esign.eu']);
 
         $mail = Mail::to(['test@test.eu', 'test2@test.eu'])->send(new TestMail());
@@ -87,7 +82,6 @@ class EmailWhitelistingTest extends TestCase
     /** @test */
     public function it_can_whitelist_emails_in_queued_mails()
     {
-        Config::set('email-whitelisting.driver', 'database');
         Event::fake();
         WhitelistedEmailAddress::create(['email' => 'test@esign.eu']);
 
@@ -99,7 +93,6 @@ class EmailWhitelistingTest extends TestCase
     /** @test */
     public function it_can_add_original_to_address_in_subject()
     {
-        Config::set('email-whitelisting.driver', 'database');
         WhitelistedEmailAddress::create(['email' => 'testA@esign.eu']);
 
         $mail = Mail::to(['testA@esign.eu', 'testB@esign.eu'])
@@ -128,7 +121,6 @@ class EmailWhitelistingTest extends TestCase
     /** @test */
     public function it_can_use_wildcards()
     {
-        Config::set('email-whitelisting.driver', 'database');
         WhitelistedEmailAddress::create(['email' => '*@esign.eu']);
 
         $mail = Mail::to(['test@esign.eu', 'agf@esign.eu', 'test2@esign.eu', 'external@gmail.com'])->send(new TestMail());
@@ -140,7 +132,6 @@ class EmailWhitelistingTest extends TestCase
     /** @test */
     public function it_wont_add_duplicate_addresses_with_wild_cards()
     {
-        Config::set('email-whitelisting.driver', 'database');
         WhitelistedEmailAddress::create(['email' => '*@esign.eu']);
         WhitelistedEmailAddress::create(['email' => 'test@esign.eu']);
 

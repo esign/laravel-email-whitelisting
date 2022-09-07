@@ -26,7 +26,6 @@ class NotificationRedirectTest extends TestCase
     /** @test */
     public function it_can_redirect_a_notification_to_another_user()
     {
-        Config::set('email-whitelisting.driver', 'database');
         Event::fake(MessageSent::class);
         WhitelistedEmailAddress::create(['email' => 'test@esign.eu', 'redirect_email' => true]);
 
@@ -50,7 +49,6 @@ class NotificationRedirectTest extends TestCase
     /** @test */
     public function it_can_redirect_a_notification_to_multiple_users()
     {
-        Config::set('email-whitelisting.driver', 'database');
         Event::fake(MessageSent::class);
         WhitelistedEmailAddress::create(['email' => 'redirect1@esign.eu', 'redirect_email' => true]);
 
@@ -91,7 +89,6 @@ class NotificationRedirectTest extends TestCase
     /** @test */
     public function it_can_redirect_multiple_notifications_to_multiple_users()
     {
-        Config::set('email-whitelisting.driver', 'database');
         Event::fake(MessageSent::class);
         WhitelistedEmailAddress::create(['email' => 'redirect1@esign.eu', 'redirect_email' => true]);
         WhitelistedEmailAddress::create(['email' => 'redirect2@esign.eu', 'redirect_email' => true]);

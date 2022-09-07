@@ -23,7 +23,6 @@ class EmailRedirectTest extends TestCase
     /** @test */
     public function it_can_redirect_emails_to_an_email_address()
     {
-        Config::set('email-whitelisting.driver', 'database');
         WhitelistedEmailAddress::create(['email' => 'test@esign.eu', 'redirect_email' => true]);
 
         $mail = Mail::to(['seppe@esign.eu', 'example@esign.eu', 'test2@example.com'])->send(new TestMail());
@@ -35,7 +34,6 @@ class EmailRedirectTest extends TestCase
     /** @test */
     public function it_can_redirect_emails_to_multiple_email_address()
     {
-        Config::set('email-whitelisting.driver', 'database');
         WhitelistedEmailAddress::create(['email' => 'test@esign.eu', 'redirect_email' => true]);
         WhitelistedEmailAddress::create(['email' => 'test2@esign.eu', 'redirect_email' => true]);
 
@@ -48,7 +46,6 @@ class EmailRedirectTest extends TestCase
     /** @test */
     public function it_removes_cc_in_redirect_mails()
     {
-        Config::set('email-whitelisting.driver', 'database');
         WhitelistedEmailAddress::create(['email' => 'test@esign.eu', 'redirect_email' => true]);
 
         $mail = Mail::to(['seppe@esign.eu', 'example@esign.eu', 'test2@example.com'])->cc('example@example.com')->send(new TestMail());
@@ -60,7 +57,6 @@ class EmailRedirectTest extends TestCase
     /** @test */
     public function it_removes_bcc_in_redirect_mails()
     {
-        Config::set('email-whitelisting.driver', 'database');
         WhitelistedEmailAddress::create(['email' => 'test@esign.eu', 'redirect_email' => true]);
 
         $mail = Mail::to(['seppe@esign.eu', 'example@esign.eu', 'test2@example.com'])->bcc('example@example.com')->send(new TestMail());
