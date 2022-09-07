@@ -87,11 +87,10 @@ class WhitelistEmailAddresses
     {
         $whitelistedEmailAddresses = collect(config('email-whitelisting.mail_addresses'));
 
-        return $emailAddresses->filter(function (string $emailAddress) use ($whitelistedEmailAddresses) {
-            return $whitelistedEmailAddresses->contains(function (string $whiteListedEmailAddress) use ($emailAddress) {
-                return Str::is($whiteListedEmailAddress, $emailAddress);
-            });
-        })->toArray();
+        return $this->filterMatchingEmailAddressCollections(
+            $emailAddresses,
+            $whitelistedEmailAddresses,
+        )->toArray();
     }
 
     protected function whitelistEmailsFromDatabase(Collection $emailAddresses): array
@@ -101,11 +100,19 @@ class WhitelistEmailAddresses
             ->orWhere('email', 'like', '*%')
             ->pluck('email');
 
+        return $this->filterMatchingEmailAddressCollections(
+            $emailAddresses,
+            $whitelistedEmailAddresses,
+        )->toArray();
+    }
+
+    protected function filterMatchingEmailAddressCollections(Collection $emailAddresses, Collection $whitelistedEmailAddresses): Collection
+    {
         return $emailAddresses->filter(function (string $emailAddress) use ($whitelistedEmailAddresses) {
             return $whitelistedEmailAddresses->contains(function (string $whiteListedEmailAddress) use ($emailAddress) {
                 return Str::is($whiteListedEmailAddress, $emailAddress);
             });
-        })->toArray();
+        });
     }
 
     protected function redirectMail(MessageSending $event): void
