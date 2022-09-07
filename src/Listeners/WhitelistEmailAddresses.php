@@ -83,22 +83,15 @@ class WhitelistEmailAddresses
         }
     }
 
-    protected function whitelistEmailsFromConfig(Collection $typeAddresses): array
+    protected function whitelistEmailsFromConfig(Collection $emailAddresses): array
     {
-        $whitelistedEmailAddresses = Arr::where(config('email-whitelisting.mail_addresses'), function (string $email) {
-            return ! Str::startsWith($email, '*');
-        });
-        $wildcards = collect(config('email-whitelisting.mail_addresses'))->where(function (string $email) {
-            return Str::startsWith($email, '*');
-        })->map(function (string $wildcard) {
-            return Str::after($wildcard, '*');
+        $whitelistedEmailAddresses = collect(config('email-whitelisting.mail_addresses'));
+
+        return $emailAddresses->filter(function (string $emailAddress) use ($whitelistedEmailAddresses) {
+            return $whitelistedEmailAddresses->contains(function (string $whiteListedEmailAddress) use ($emailAddress) {
+                return Str::is($whiteListedEmailAddress, $emailAddress);
+            });
         })->toArray();
-
-        $addressesFromWildCards = $typeAddresses->where(function (string $typeAddress) use ($wildcards) {
-            return Str::endsWith($typeAddress, $wildcards);
-        });
-
-        return array_unique([...$whitelistedEmailAddresses, ...$addressesFromWildCards]);
     }
 
     protected function whitelistEmailsFromDatabase(Collection $typeAddresses): array
