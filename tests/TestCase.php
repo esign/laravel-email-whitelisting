@@ -14,6 +14,13 @@ use Symfony\Component\Mime\Address;
 
 abstract class TestCase extends BaseTestCase
 {
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->setUpDatabase();
+    }
+
     protected function getPackageProviders($app): array
     {
         return [EmailWhitelistingServiceProvider::class];
@@ -23,16 +30,6 @@ abstract class TestCase extends BaseTestCase
     {
         Config::set('email-whitelisting.enabled', true);
         $app->bind(EmailWhitelistingDriverContract::class, DatabaseDriver::class);
-        Schema::create('users', function (Blueprint $table) {
-            $table->id();
-            $table->string('name');
-            $table->string('email')->unique();
-            $table->timestamp('created_at')->useCurrent();
-            $table->timestamp('updated_at')->useCurrent()->useCurrentOnUpdate();
-        });
-
-        $whitelistEmailAddressesMigration = include __DIR__ . '/../database/migrations/create_whitelist_email_addresses_table.php.stub';
-        $whitelistEmailAddressesMigration->up();
     }
 
     /**
@@ -52,5 +49,19 @@ abstract class TestCase extends BaseTestCase
         return collect($addresses)->map(function (Address $item) {
             return $item->getAddress();
         })->toArray();
+    }
+
+    protected function setUpDatabase(): void
+    {
+        Schema::create('users', function (Blueprint $table) {
+            $table->id();
+            $table->string('name');
+            $table->string('email')->unique();
+            $table->timestamp('created_at')->useCurrent();
+            $table->timestamp('updated_at')->useCurrent()->useCurrentOnUpdate();
+        });
+
+        $whitelistEmailAddressesMigration = include __DIR__ . '/../database/migrations/create_whitelist_email_addresses_table.php.stub';
+        $whitelistEmailAddressesMigration->up();
     }
 }
