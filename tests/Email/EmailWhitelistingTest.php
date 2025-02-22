@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Mail;
 
-class EmailWhitelistingTest extends TestCase
+final class EmailWhitelistingTest extends TestCase
 {
     use RefreshDatabase;
 

@@ -12,7 +12,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Mail;
 
-class EmailRedirectTest extends TestCase
+final class EmailRedirectTest extends TestCase
 {
     use RefreshDatabase;
 

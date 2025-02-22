@@ -13,7 +13,7 @@ use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Notification;
 
-class NotificationWhitelistingTest extends TestCase
+final class NotificationWhitelistingTest extends TestCase
 {
     use RefreshDatabase;
 

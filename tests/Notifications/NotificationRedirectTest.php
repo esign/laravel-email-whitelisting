@@ -13,7 +13,7 @@ use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Notification;
 
-class NotificationRedirectTest extends TestCase
+final class NotificationRedirectTest extends TestCase
 {
     use RefreshDatabase;
 
