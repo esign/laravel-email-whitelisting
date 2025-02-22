@@ -2,6 +2,7 @@
 
 namespace Esign\EmailWhitelisting\Tests\Notifications;
 
+use PHPUnit\Framework\Attributes\Test;
 use Esign\EmailWhitelisting\Models\WhitelistedEmailAddress;
 use Esign\EmailWhitelisting\Tests\Support\Models\User;
 use Esign\EmailWhitelisting\Tests\Support\Notifications\TestNotification;
@@ -12,7 +13,7 @@ use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Notification;
 
-class NotificationRedirectTest extends TestCase
+final class NotificationRedirectTest extends TestCase
 {
     use RefreshDatabase;
 
@@ -23,8 +24,8 @@ class NotificationRedirectTest extends TestCase
         Config::set('email-whitelisting.redirecting_enabled', true);
     }
 
-    /** @test */
-    public function it_can_redirect_a_notification_to_another_user()
+    #[Test]
+    public function it_can_redirect_a_notification_to_another_user(): void
     {
         Event::fake(MessageSent::class);
         WhitelistedEmailAddress::create(['email' => 'test@esign.eu', 'redirect_email' => true]);
@@ -46,8 +47,8 @@ class NotificationRedirectTest extends TestCase
         });
     }
 
-    /** @test */
-    public function it_can_redirect_a_notification_to_multiple_users()
+    #[Test]
+    public function it_can_redirect_a_notification_to_multiple_users(): void
     {
         Event::fake(MessageSent::class);
         WhitelistedEmailAddress::create(['email' => 'redirect1@esign.eu', 'redirect_email' => true]);
@@ -86,8 +87,8 @@ class NotificationRedirectTest extends TestCase
         });
     }
 
-    /** @test */
-    public function it_can_redirect_multiple_notifications_to_multiple_users()
+    #[Test]
+    public function it_can_redirect_multiple_notifications_to_multiple_users(): void
     {
         Event::fake(MessageSent::class);
         WhitelistedEmailAddress::create(['email' => 'redirect1@esign.eu', 'redirect_email' => true]);

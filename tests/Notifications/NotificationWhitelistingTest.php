@@ -2,6 +2,7 @@
 
 namespace Esign\EmailWhitelisting\Tests\Notifications;
 
+use PHPUnit\Framework\Attributes\Test;
 use Esign\EmailWhitelisting\Models\WhitelistedEmailAddress;
 use Esign\EmailWhitelisting\Tests\Support\Models\User;
 use Esign\EmailWhitelisting\Tests\Support\Notifications\TestNotification;
@@ -12,7 +13,7 @@ use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Notification;
 
-class NotificationWhitelistingTest extends TestCase
+final class NotificationWhitelistingTest extends TestCase
 {
     use RefreshDatabase;
 
@@ -23,8 +24,8 @@ class NotificationWhitelistingTest extends TestCase
         Config::set('email-whitelisting.redirecting_enabled', false);
     }
 
-    /** @test */
-    public function it_can_whitelist_email_address_in_a_notification()
+    #[Test]
+    public function it_can_whitelist_email_address_in_a_notification(): void
     {
         Event::fake(MessageSent::class);
         WhitelistedEmailAddress::create(['email' => 'test@esign.eu']);
@@ -39,8 +40,8 @@ class NotificationWhitelistingTest extends TestCase
         Event::assertNotDispatched(MessageSent::class);
     }
 
-    /** @test */
-    public function it_can_whitelist_email_addresses_in_a_notification()
+    #[Test]
+    public function it_can_whitelist_email_addresses_in_a_notification(): void
     {
         Event::fake(MessageSent::class);
         WhitelistedEmailAddress::create(['email' => 'test@esign.eu']);
@@ -66,8 +67,8 @@ class NotificationWhitelistingTest extends TestCase
         Event::assertDispatchedTimes(MessageSent::class, 2);
     }
 
-    /** @test */
-    public function it_wont_throw_an_error_when_no_valid_email_addresses_are_given()
+    #[Test]
+    public function it_wont_throw_an_error_when_no_valid_email_addresses_are_given(): void
     {
         Event::fake(MessageSent::class);
 
@@ -91,8 +92,8 @@ class NotificationWhitelistingTest extends TestCase
         Event::assertNotDispatched(MessageSent::class);
     }
 
-    /** @test */
-    public function it_can_redirect_a_notification_to_another_user()
+    #[Test]
+    public function it_can_redirect_a_notification_to_another_user(): void
     {
         Event::fake(MessageSent::class);
         WhitelistedEmailAddress::create(['email' => 'test@esign.eu']);
