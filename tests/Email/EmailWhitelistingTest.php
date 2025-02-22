@@ -26,7 +26,7 @@ class EmailWhitelistingTest extends TestCase
     }
 
     #[Test]
-    public function it_can_whitelist_email_addresses()
+    public function it_can_whitelist_email_addresses(): void
     {
         WhitelistedEmailAddress::create(['email' => 'test@esign.eu']);
 
@@ -37,7 +37,7 @@ class EmailWhitelistingTest extends TestCase
     }
 
     #[Test]
-    public function it_can_whitelist_email_addresses_in_cc()
+    public function it_can_whitelist_email_addresses_in_cc(): void
     {
         WhitelistedEmailAddress::create(['email' => 'test@esign.eu']);
         WhitelistedEmailAddress::create(['email' => 'cc@esign.eu']);
@@ -49,7 +49,7 @@ class EmailWhitelistingTest extends TestCase
     }
 
     #[Test]
-    public function it_can_whitelist_email_addresses_in_bcc()
+    public function it_can_whitelist_email_addresses_in_bcc(): void
     {
         WhitelistedEmailAddress::create(['email' => 'test@esign.eu']);
         WhitelistedEmailAddress::create(['email' => 'bcc@esign.eu']);
@@ -61,7 +61,7 @@ class EmailWhitelistingTest extends TestCase
     }
 
     #[Test]
-    public function it_can_disable_email_whitelisting()
+    public function it_can_disable_email_whitelisting(): void
     {
         Config::set('email-whitelisting.enabled', false);
         WhitelistedEmailAddress::create(['email' => 'test@esign.eu']);
@@ -73,7 +73,7 @@ class EmailWhitelistingTest extends TestCase
     }
 
     #[Test]
-    public function it_wont_throw_an_error_when_no_valid_email_addresses_are_given()
+    public function it_wont_throw_an_error_when_no_valid_email_addresses_are_given(): void
     {
         WhitelistedEmailAddress::create(['email' => 'test@esign.eu']);
 
@@ -83,7 +83,7 @@ class EmailWhitelistingTest extends TestCase
     }
 
     #[Test]
-    public function it_can_whitelist_emails_in_queued_mails()
+    public function it_can_whitelist_emails_in_queued_mails(): void
     {
         Event::fake();
         WhitelistedEmailAddress::create(['email' => 'test@esign.eu']);
@@ -94,7 +94,7 @@ class EmailWhitelistingTest extends TestCase
     }
 
     #[Test]
-    public function it_can_add_original_to_address_in_subject()
+    public function it_can_add_original_to_address_in_subject(): void
     {
         WhitelistedEmailAddress::create(['email' => 'testA@esign.eu']);
 
@@ -110,7 +110,7 @@ class EmailWhitelistingTest extends TestCase
     }
 
     #[Test]
-    public function it_can_use_the_config_driver()
+    public function it_can_use_the_config_driver(): void
     {
         $this->app->bind(EmailWhitelistingDriverContract::class, ConfigurationDriver::class);
         Config::set('email-whitelisting.mail_addresses', ['test@esign.eu']);
@@ -122,7 +122,7 @@ class EmailWhitelistingTest extends TestCase
     }
 
     #[Test]
-    public function it_can_use_wildcards()
+    public function it_can_use_wildcards(): void
     {
         WhitelistedEmailAddress::create(['email' => '*@esign.eu']);
 
@@ -133,7 +133,7 @@ class EmailWhitelistingTest extends TestCase
     }
 
     #[Test]
-    public function it_wont_add_duplicate_addresses_with_wild_cards()
+    public function it_wont_add_duplicate_addresses_with_wild_cards(): void
     {
         WhitelistedEmailAddress::create(['email' => '*@esign.eu']);
         WhitelistedEmailAddress::create(['email' => 'test@esign.eu']);
@@ -145,7 +145,7 @@ class EmailWhitelistingTest extends TestCase
     }
 
     #[Test]
-    public function it_can_use_wildcards_with_the_config_driver()
+    public function it_can_use_wildcards_with_the_config_driver(): void
     {
         $this->app->bind(EmailWhitelistingDriverContract::class, ConfigurationDriver::class);
         Config::set('email-whitelisting.mail_addresses', ['*@esign.eu']);

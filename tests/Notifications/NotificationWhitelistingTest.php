@@ -25,7 +25,7 @@ class NotificationWhitelistingTest extends TestCase
     }
 
     #[Test]
-    public function it_can_whitelist_email_address_in_a_notification()
+    public function it_can_whitelist_email_address_in_a_notification(): void
     {
         Event::fake(MessageSent::class);
         WhitelistedEmailAddress::create(['email' => 'test@esign.eu']);
@@ -41,7 +41,7 @@ class NotificationWhitelistingTest extends TestCase
     }
 
     #[Test]
-    public function it_can_whitelist_email_addresses_in_a_notification()
+    public function it_can_whitelist_email_addresses_in_a_notification(): void
     {
         Event::fake(MessageSent::class);
         WhitelistedEmailAddress::create(['email' => 'test@esign.eu']);
@@ -68,7 +68,7 @@ class NotificationWhitelistingTest extends TestCase
     }
 
     #[Test]
-    public function it_wont_throw_an_error_when_no_valid_email_addresses_are_given()
+    public function it_wont_throw_an_error_when_no_valid_email_addresses_are_given(): void
     {
         Event::fake(MessageSent::class);
 
@@ -93,7 +93,7 @@ class NotificationWhitelistingTest extends TestCase
     }
 
     #[Test]
-    public function it_can_redirect_a_notification_to_another_user()
+    public function it_can_redirect_a_notification_to_another_user(): void
     {
         Event::fake(MessageSent::class);
         WhitelistedEmailAddress::create(['email' => 'test@esign.eu']);
