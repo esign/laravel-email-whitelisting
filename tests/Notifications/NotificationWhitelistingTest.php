@@ -2,6 +2,7 @@
 
 namespace Esign\EmailWhitelisting\Tests\Notifications;
 
+use PHPUnit\Framework\Attributes\Test;
 use Esign\EmailWhitelisting\Models\WhitelistedEmailAddress;
 use Esign\EmailWhitelisting\Tests\Support\Models\User;
 use Esign\EmailWhitelisting\Tests\Support\Notifications\TestNotification;
@@ -23,7 +24,7 @@ class NotificationWhitelistingTest extends TestCase
         Config::set('email-whitelisting.redirecting_enabled', false);
     }
 
-    /** @test */
+    #[Test]
     public function it_can_whitelist_email_address_in_a_notification()
     {
         Event::fake(MessageSent::class);
@@ -39,7 +40,7 @@ class NotificationWhitelistingTest extends TestCase
         Event::assertNotDispatched(MessageSent::class);
     }
 
-    /** @test */
+    #[Test]
     public function it_can_whitelist_email_addresses_in_a_notification()
     {
         Event::fake(MessageSent::class);
@@ -66,7 +67,7 @@ class NotificationWhitelistingTest extends TestCase
         Event::assertDispatchedTimes(MessageSent::class, 2);
     }
 
-    /** @test */
+    #[Test]
     public function it_wont_throw_an_error_when_no_valid_email_addresses_are_given()
     {
         Event::fake(MessageSent::class);
@@ -91,7 +92,7 @@ class NotificationWhitelistingTest extends TestCase
         Event::assertNotDispatched(MessageSent::class);
     }
 
-    /** @test */
+    #[Test]
     public function it_can_redirect_a_notification_to_another_user()
     {
         Event::fake(MessageSent::class);

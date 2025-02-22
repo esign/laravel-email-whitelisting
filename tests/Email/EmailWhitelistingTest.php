@@ -2,6 +2,7 @@
 
 namespace Esign\EmailWhitelisting\Tests\Email;
 
+use PHPUnit\Framework\Attributes\Test;
 use Esign\EmailWhitelisting\Contracts\EmailWhitelistingDriverContract;
 use Esign\EmailWhitelisting\Drivers\ConfigurationDriver;
 use Esign\EmailWhitelisting\Models\WhitelistedEmailAddress;
@@ -24,7 +25,7 @@ class EmailWhitelistingTest extends TestCase
         Config::set('email-whitelisting.redirecting_enabled', false);
     }
 
-    /** @test */
+    #[Test]
     public function it_can_whitelist_email_addresses()
     {
         WhitelistedEmailAddress::create(['email' => 'test@esign.eu']);
@@ -35,7 +36,7 @@ class EmailWhitelistingTest extends TestCase
         $this->assertEquals(['test@esign.eu'], $recipients);
     }
 
-    /** @test */
+    #[Test]
     public function it_can_whitelist_email_addresses_in_cc()
     {
         WhitelistedEmailAddress::create(['email' => 'test@esign.eu']);
@@ -47,7 +48,7 @@ class EmailWhitelistingTest extends TestCase
         $this->assertEquals(['cc@esign.eu'], $ccRecipients);
     }
 
-    /** @test */
+    #[Test]
     public function it_can_whitelist_email_addresses_in_bcc()
     {
         WhitelistedEmailAddress::create(['email' => 'test@esign.eu']);
@@ -59,7 +60,7 @@ class EmailWhitelistingTest extends TestCase
         $this->assertEquals(['bcc@esign.eu'], $bccRecipients);
     }
 
-    /** @test */
+    #[Test]
     public function it_can_disable_email_whitelisting()
     {
         Config::set('email-whitelisting.enabled', false);
@@ -71,7 +72,7 @@ class EmailWhitelistingTest extends TestCase
         $this->assertEquals(['test@esign.eu', 'agf@esign.eu'], $recipients);
     }
 
-    /** @test */
+    #[Test]
     public function it_wont_throw_an_error_when_no_valid_email_addresses_are_given()
     {
         WhitelistedEmailAddress::create(['email' => 'test@esign.eu']);
@@ -81,7 +82,7 @@ class EmailWhitelistingTest extends TestCase
         $this->assertNull($mail);
     }
 
-    /** @test */
+    #[Test]
     public function it_can_whitelist_emails_in_queued_mails()
     {
         Event::fake();
@@ -92,7 +93,7 @@ class EmailWhitelistingTest extends TestCase
         Event::assertDispatched(MessageSending::class);
     }
 
-    /** @test */
+    #[Test]
     public function it_can_add_original_to_address_in_subject()
     {
         WhitelistedEmailAddress::create(['email' => 'testA@esign.eu']);
@@ -108,7 +109,7 @@ class EmailWhitelistingTest extends TestCase
         );
     }
 
-    /** @test */
+    #[Test]
     public function it_can_use_the_config_driver()
     {
         $this->app->bind(EmailWhitelistingDriverContract::class, ConfigurationDriver::class);
@@ -120,7 +121,7 @@ class EmailWhitelistingTest extends TestCase
         $this->assertEquals(['test@esign.eu'], $recipients);
     }
 
-    /** @test */
+    #[Test]
     public function it_can_use_wildcards()
     {
         WhitelistedEmailAddress::create(['email' => '*@esign.eu']);
@@ -131,7 +132,7 @@ class EmailWhitelistingTest extends TestCase
         $this->assertEquals(['test@esign.eu', 'agf@esign.eu', 'test2@esign.eu'], $recipients);
     }
 
-    /** @test */
+    #[Test]
     public function it_wont_add_duplicate_addresses_with_wild_cards()
     {
         WhitelistedEmailAddress::create(['email' => '*@esign.eu']);
@@ -143,7 +144,7 @@ class EmailWhitelistingTest extends TestCase
         $this->assertEquals(['test@esign.eu', 'agf@esign.eu', 'test2@esign.eu'], $recipients);
     }
 
-    /** @test */
+    #[Test]
     public function it_can_use_wildcards_with_the_config_driver()
     {
         $this->app->bind(EmailWhitelistingDriverContract::class, ConfigurationDriver::class);

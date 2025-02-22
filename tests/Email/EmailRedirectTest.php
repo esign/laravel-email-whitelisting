@@ -2,6 +2,7 @@
 
 namespace Esign\EmailWhitelisting\Tests\Email;
 
+use PHPUnit\Framework\Attributes\Test;
 use Esign\EmailWhitelisting\Contracts\EmailWhitelistingDriverContract;
 use Esign\EmailWhitelisting\Drivers\ConfigurationDriver;
 use Esign\EmailWhitelisting\Models\WhitelistedEmailAddress;
@@ -22,7 +23,7 @@ class EmailRedirectTest extends TestCase
         Config::set('email-whitelisting.redirecting_enabled', true);
     }
 
-    /** @test */
+    #[Test]
     public function it_can_redirect_emails_to_an_email_address()
     {
         WhitelistedEmailAddress::create(['email' => 'test@esign.eu', 'redirect_email' => true]);
@@ -33,7 +34,7 @@ class EmailRedirectTest extends TestCase
         $this->assertEquals(['test@esign.eu'], $recipients);
     }
 
-    /** @test */
+    #[Test]
     public function it_can_redirect_emails_to_multiple_email_address()
     {
         WhitelistedEmailAddress::create(['email' => 'test@esign.eu', 'redirect_email' => true]);
@@ -45,7 +46,7 @@ class EmailRedirectTest extends TestCase
         $this->assertEquals(['test@esign.eu', 'test2@esign.eu'], $recipients);
     }
 
-    /** @test */
+    #[Test]
     public function it_removes_cc_in_redirect_mails()
     {
         WhitelistedEmailAddress::create(['email' => 'test@esign.eu', 'redirect_email' => true]);
@@ -56,7 +57,7 @@ class EmailRedirectTest extends TestCase
         $this->assertEmpty($ccRecipients);
     }
 
-    /** @test */
+    #[Test]
     public function it_removes_bcc_in_redirect_mails()
     {
         WhitelistedEmailAddress::create(['email' => 'test@esign.eu', 'redirect_email' => true]);
@@ -67,7 +68,7 @@ class EmailRedirectTest extends TestCase
         $this->assertEmpty($bccRecipients);
     }
 
-    /** @test */
+    #[Test]
     public function it_can_use_the_config_driver()
     {
         $this->app->bind(EmailWhitelistingDriverContract::class, ConfigurationDriver::class);
