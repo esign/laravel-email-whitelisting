@@ -13,6 +13,7 @@ use Illuminate\Mail\Events\MessageSending;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Log;
 
 final class EmailWhitelistingTest extends TestCase
 {
@@ -34,6 +35,21 @@ final class EmailWhitelistingTest extends TestCase
         $recipients = $this->getAddresses($mail);
 
         $this->assertEquals(['test@esign.eu'], $recipients);
+    }
+
+    #[Test]
+    public function it_can_warn_if_whitelist_email_addresses(): void
+    {
+        Config::set('email-whitelisting.warn', true);
+
+        WhitelistedEmailAddress::create(['email' => 'test@esign.eu']);
+
+        $mail = Mail::to(['test@esign.eu', 'agf@esign.eu', 'xyz@example.com'])->send(new TestMail());
+        $recipients = $this->getAddresses($mail);
+
+        $this->assertEquals(['test@esign.eu'], $recipients);
+
+        Log::shouldReceive('warning')->with("Skipping email addresses: agf@esign.eu, xyz@example.com.");
     }
 
     #[Test]
