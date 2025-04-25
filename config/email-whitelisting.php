@@ -7,6 +7,11 @@ return [
     'enabled' => env('EMAIL_WHITELISTING_ENABLED', false),
 
     /**
+     * This is used to enable logging when an email address is skipped.
+    */
+    'warn' => true,
+
+    /**
      * This is the driver responsible for providing whitelisted email addresses.
      * It should implement the EmailWhitelistingDriverContract interface.
      */
