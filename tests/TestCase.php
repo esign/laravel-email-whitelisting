@@ -29,7 +29,6 @@ abstract class TestCase extends BaseTestCase
     protected function getEnvironmentSetUp($app)
     {
         Config::set('email-whitelisting.enabled', true);
-        Config::set('email-whitelisting.warn', false);
         $app->bind(EmailWhitelistingDriverContract::class, DatabaseDriver::class);
     }
 
