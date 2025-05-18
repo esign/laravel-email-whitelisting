@@ -5,14 +5,17 @@ namespace Esign\EmailWhitelisting\Tests\Email;
 use PHPUnit\Framework\Attributes\Test;
 use Esign\EmailWhitelisting\Contracts\EmailWhitelistingDriverContract;
 use Esign\EmailWhitelisting\Drivers\ConfigurationDriver;
+use Esign\EmailWhitelisting\Events\EmailAddressesSkipped;
 use Esign\EmailWhitelisting\Models\WhitelistedEmailAddress;
 use Esign\EmailWhitelisting\Tests\Support\Mail\TestMail;
 use Esign\EmailWhitelisting\Tests\TestCase;
+use Exception;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Mail\Events\MessageSending;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Log;
 
 final class EmailWhitelistingTest extends TestCase
 {
@@ -154,5 +157,88 @@ final class EmailWhitelistingTest extends TestCase
         $recipients = $this->getAddresses($mail);
 
         $this->assertEquals(['test@esign.eu', 'agf@esign.eu', 'test2@esign.eu'], $recipients);
+    }
+
+    #[Test]
+    public function it_triggers_an_event_when_email_addresses_are_skipped(): void
+    {
+        Event::fake([EmailAddressesSkipped::class]);
+        WhitelistedEmailAddress::create(['email' => 'to@esign.eu']);
+        WhitelistedEmailAddress::create(['email' => 'cc@esign.eu']);
+        WhitelistedEmailAddress::create(['email' => 'bcc@esign.eu']);
+
+        Mail::to(['to@esign.eu', 'to2@example.com'])
+            ->cc(['cc@esign.eu', 'cc2@esign.eu'])
+            ->bcc(['bcc@esign.eu', 'bcc2@esign.eu'])
+            ->send(new TestMail());
+
+        Event::assertDispatchedTimes(EmailAddressesSkipped::class, 3);
+        Event::assertDispatched(EmailAddressesSkipped::class, function (EmailAddressesSkipped $event) {
+            $assertSendingType = $event->sendingType === 'To';
+            $assertSkippedEmailAddresses = collect(['to2@example.com'])
+                ->every(fn ($email) => $event->skippedEmailAddresses->contains($email));
+            $assertOriginalEmailAddresses = collect(['to@esign.eu', 'to2@example.com'])
+                ->every(fn ($email) => $event->originalEmailAddresses->contains($email));
+
+            return $assertSkippedEmailAddresses && $assertOriginalEmailAddresses && $assertSendingType;
+        });
+        Event::assertDispatched(EmailAddressesSkipped::class, function (EmailAddressesSkipped $event) {
+            $assertSendingType = $event->sendingType === 'Cc';
+            $assertSkippedEmailAddresses = collect(['cc2@esign.eu'])
+                ->every(fn ($email) => $event->skippedEmailAddresses->contains($email));
+            $assertOriginalEmailAddresses = collect(['cc@esign.eu', 'cc2@esign.eu'])
+                ->every(fn ($email) => $event->originalEmailAddresses->contains($email));
+
+            return $assertSkippedEmailAddresses && $assertOriginalEmailAddresses && $assertSendingType;
+        });
+        Event::assertDispatched(EmailAddressesSkipped::class, function (EmailAddressesSkipped $event) {
+            $assertSendingType = $event->sendingType === 'Bcc';
+            $assertSkippedEmailAddresses = collect(['bcc2@esign.eu'])
+                ->every(fn ($email) => $event->skippedEmailAddresses->contains($email));
+            $assertOriginalEmailAddresses = collect(['bcc@esign.eu', 'bcc2@esign.eu'])
+                ->every(fn ($email) => $event->originalEmailAddresses->contains($email));
+
+            return $assertSkippedEmailAddresses && $assertOriginalEmailAddresses && $assertSendingType;
+        });
+    }
+
+    #[Test]
+    public function it_wont_trigger_an_event_when_no_email_addresses_are_skipped(): void
+    {
+        Event::fake([EmailAddressesSkipped::class]);
+        WhitelistedEmailAddress::create(['email' => 'to@esign.eu']);
+        WhitelistedEmailAddress::create(['email' => 'cc@esign.eu']);
+        WhitelistedEmailAddress::create(['email' => 'bcc@esign.eu']);
+
+        Mail::to(['to@esign.eu'])
+            ->cc(['cc@esign.eu'])
+            ->bcc(['bcc@esign.eu'])
+            ->send(new TestMail());
+
+        Event::assertNotDispatched(EmailAddressesSkipped::class);
+    }
+
+    #[Test]
+    public function it_wont_trigger_an_event_when_no_email_addresses_are_skipped_using_wildcards(): void
+    {
+        Event::fake([EmailAddressesSkipped::class]);
+        WhitelistedEmailAddress::create(['email' => '*@esign.eu']);
+
+        Mail::to(['to@esign.eu'])
+            ->cc(['cc@esign.eu'])
+            ->bcc(['bcc@esign.eu'])
+            ->send(new TestMail());
+
+        Event::assertNotDispatched(EmailAddressesSkipped::class);
+    }
+
+    #[Test]
+    public function it_can_throw_an_exception_when_listening_for_events(): void
+    {
+        $this->expectException(Exception::class);
+        $this->expectExceptionMessage('Email addresses skipped');
+        Event::listen(EmailAddressesSkipped::class, fn () => throw new Exception('Email addresses skipped'));
+
+        Mail::to(['to@esign.eu'])->send(new TestMail());
     }
 }

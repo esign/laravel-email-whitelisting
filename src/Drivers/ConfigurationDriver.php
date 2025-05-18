@@ -3,31 +3,18 @@
 namespace Esign\EmailWhitelisting\Drivers;
 
 use Esign\EmailWhitelisting\Contracts\EmailWhitelistingDriverContract;
-use Esign\EmailWhitelisting\Support\MessageSendingHelper;
 use Illuminate\Mail\Events\MessageSending;
+use Illuminate\Support\Collection;
 
-class ConfigurationDriver extends AbstractDriver implements EmailWhitelistingDriverContract
+class ConfigurationDriver implements EmailWhitelistingDriverContract
 {
-    public function whitelistEmailAddresses(MessageSending $messageSendingEvent): void
+    public function whitelistEmailAddresses(MessageSending $messageSendingEvent): Collection
     {
-        $whitelistedEmailAddresses = collect(config('email-whitelisting.mail_addresses'));
-
-        MessageSendingHelper::getEmailAddressesGroupedBySendingType($messageSendingEvent)
-            ->each(function (array $emailAddresses, string $sendingType) use ($messageSendingEvent, $whitelistedEmailAddresses) {
-                $matchingWhitelistedEmailAddresses = $this->filterMatchingEmailAddressCollections(
-                    collect($emailAddresses),
-                    $whitelistedEmailAddresses,
-                )->toArray();
-                $messageSendingEvent->message->{strtolower($sendingType)}(...$matchingWhitelistedEmailAddresses);
-            });
+        return collect((array) config('email-whitelisting.mail_addresses'));
     }
 
-    public function redirectEmailAddresses(MessageSending $messageSendingEvent): void
+    public function redirectEmailAddresses(MessageSending $messageSendingEvent): Collection
     {
-        $emailsSendTo = config('email-whitelisting.mail_addresses');
-        $messageSendingEvent->message->to(...$emailsSendTo);
-
-        $messageSendingEvent->message->cc();
-        $messageSendingEvent->message->bcc();
+        return collect((array) config('email-whitelisting.mail_addresses'));
     }
 }

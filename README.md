@@ -86,6 +86,34 @@ By using an `*` you're able to cover a full domain, e.g. `*@esign.eu`.
 * When there are no matching whitelisted email addresses found, the email will be cancelled.
 * This package will append the original receivers to the subject of the outgoing mail. e.g. `My cool mail subject (To: john@example.com) (Cc: jane@example.com)`.
 
+## Events
+
+### EmailAddressesSkipped
+
+When an outgoing email contains recipients that are not whitelisted and are therefore skipped, the package will dispatch the `Esign\EmailWhitelisting\Events\EmailAddressesSkipped` event.
+
+```php
+namespace App\Listeners;
+
+use Esign\EmailWhitelisting\Events\EmailAddressesSkipped;
+use Illuminate\Support\Facades\Log;
+
+class LogSkippedEmailAddresses
+{
+    public function handle(EmailAddressesSkipped $event): void
+    {
+        Log::info('Skipped email addresses while sending email:', [
+            'sending_type' => $event->messageSendingEvent->sendingType, // e.g. 'to', 'cc', 'bcc'
+            'subject' => $event->messageSendingEvent->message->getSubject(),
+            'skipped_email_addresses' => $event->skippedEmailAddresses->implode(', '),
+            'original_email_addresses' => $event->originalEmailAddresses->implode(', '),
+        ]);
+    }
+}
+```
+
+For information on how to register event listeners, see the [Laravel documentation](https://laravel.com/docs/events#registering-events-and-listeners).
+
 ### Testing
 
 ```bash
