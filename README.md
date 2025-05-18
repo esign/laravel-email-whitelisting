@@ -103,7 +103,7 @@ class LogSkippedEmailAddresses
     public function handle(EmailAddressesSkipped $event): void
     {
         Log::info('Skipped email addresses while sending email:', [
-            'sending_type' => $event->messageSendingEvent->sendingType, // e.g. 'to', 'cc', 'bcc'
+            'sending_type' => $event->sendingType, // e.g. 'to', 'cc', 'bcc'
             'subject' => $event->messageSendingEvent->message->getSubject(),
             'skipped_email_addresses' => $event->skippedEmailAddresses->implode(', '),
             'original_email_addresses' => $event->originalEmailAddresses->implode(', '),
