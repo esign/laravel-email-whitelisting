@@ -2,7 +2,6 @@
 
 namespace Esign\EmailWhitelisting\Tests\Notifications;
 
-use PHPUnit\Framework\Attributes\Test;
 use Esign\EmailWhitelisting\Models\WhitelistedEmailAddress;
 use Esign\EmailWhitelisting\Tests\Support\Models\User;
 use Esign\EmailWhitelisting\Tests\Support\Notifications\TestNotification;
@@ -12,6 +11,7 @@ use Illuminate\Mail\Events\MessageSent;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Notification;
+use PHPUnit\Framework\Attributes\Test;
 
 final class NotificationWhitelistingTest extends TestCase
 {

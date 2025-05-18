@@ -12,5 +12,6 @@ class EmailAddressesSkipped
         public Collection $originalEmailAddresses,
         public MessageSending $messageSendingEvent,
         public string $sendingType,
-    ) {}
+    ) {
+    }
 }

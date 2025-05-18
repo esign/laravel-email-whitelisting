@@ -2,7 +2,6 @@
 
 namespace Esign\EmailWhitelisting\Tests\Email;
 
-use PHPUnit\Framework\Attributes\Test;
 use Esign\EmailWhitelisting\Contracts\EmailWhitelistingDriverContract;
 use Esign\EmailWhitelisting\Drivers\ConfigurationDriver;
 use Esign\EmailWhitelisting\Events\EmailAddressesSkipped;
@@ -15,7 +14,7 @@ use Illuminate\Mail\Events\MessageSending;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Mail;
-use Illuminate\Support\Facades\Log;
+use PHPUnit\Framework\Attributes\Test;
 
 final class EmailWhitelistingTest extends TestCase
 {
