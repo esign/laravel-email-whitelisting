@@ -21,4 +21,11 @@ class MessageSendingHelper
             );
         });
     }
+
+    public static function getAllEmailAddresses(MessageSending $messageSendingEvent): Collection
+    {
+        return self::getEmailAddressesGroupedBySendingType($messageSendingEvent)
+            ->flatten()
+            ->unique();
+    }
 }

@@ -6,33 +6,22 @@ use Esign\EmailWhitelisting\Contracts\EmailWhitelistingDriverContract;
 use Esign\EmailWhitelisting\Models\WhitelistedEmailAddress;
 use Esign\EmailWhitelisting\Support\MessageSendingHelper;
 use Illuminate\Mail\Events\MessageSending;
+use Illuminate\Support\Collection;
 
-class DatabaseDriver extends AbstractDriver implements EmailWhitelistingDriverContract
+class DatabaseDriver implements EmailWhitelistingDriverContract
 {
-    public function whitelistEmailAddresses(MessageSending $messageSendingEvent): void
+    public function whitelistEmailAddresses(MessageSending $messageSendingEvent): Collection
     {
-        $emailAddressesGroupedBySendingType = MessageSendingHelper::getEmailAddressesGroupedBySendingType($messageSendingEvent);
-        $whitelistedEmailAddresses = WhitelistedEmailAddress::query()
-            ->whereIn('email', $emailAddressesGroupedBySendingType->flatten())
+        $emailAddresses = MessageSendingHelper::getAllEmailAddresses($messageSendingEvent);
+
+        return WhitelistedEmailAddress::query()
+            ->whereIn('email', $emailAddresses)
             ->orWhere('email', 'like', '*%')
             ->pluck('email');
-
-        $emailAddressesGroupedBySendingType
-            ->each(function (array $emailAddresses, string $sendingType) use ($messageSendingEvent, $whitelistedEmailAddresses) {
-                $matchingWhitelistedEmailAddresses = $this->filterMatchingEmailAddressCollections(
-                    collect($emailAddresses),
-                    $whitelistedEmailAddresses,
-                )->toArray();
-                $messageSendingEvent->message->{strtolower($sendingType)}(...$matchingWhitelistedEmailAddresses);
-            });
     }
 
-    public function redirectEmailAddresses(MessageSending $messageSendingEvent): void
+    public function redirectEmailAddresses(MessageSending $messageSendingEvent): Collection
     {
-        $redirectedEmailAddresses = WhitelistedEmailAddress::where('redirect_email', true)->pluck('email');
-        $messageSendingEvent->message->to(...$redirectedEmailAddresses);
-
-        $messageSendingEvent->message->cc();
-        $messageSendingEvent->message->bcc();
+        return WhitelistedEmailAddress::where('redirect_email', true)->pluck('email');
     }
 }
